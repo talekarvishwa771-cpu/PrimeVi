@@ -3,7 +3,7 @@
 // Client and Admin both log in with Firebase email/password.
 // Role (client vs admin) is read from a "users" collection in Firestore.
 
-let selectedRole = "client"; // matches existing setRole() toggle
+// selectedRole is already declared as a global in state.js — reuse it here
 
 function setRole(role) {
   selectedRole = role;

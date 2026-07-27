@@ -2,12 +2,13 @@
 // Firebase project settings — get these values from:
 // Firebase Console > Project Settings > General > Your apps > SDK setup and config
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+
+  apiKey: "AIzaSyBtCu_5mRRVUGsjI3WC5NbYtMS-XofIcH8",
+  authDomain: "prime-visuals-6e302.firebaseapp.com",
+  projectId: "prime-visuals-6e302",
+  storageBucket: "prime-visuals-6e302.firebasestorage.app",
+  messagingSenderId: "924323335589",
+  appId: "1:924323335589:web:7ea1d66287b1a4089dac4c"
 };
 
 firebase.initializeApp(firebaseConfig);

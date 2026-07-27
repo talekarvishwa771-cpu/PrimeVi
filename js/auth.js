@@ -1,4 +1,4 @@
-// js/auth.js
+// 
 // Replaces the demo "any email/password works" login with real Firebase Auth.
 // Client and Admin both log in with Firebase email/password.
 // Role (client vs admin) is read from a "users" collection in Firestore.

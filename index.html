@@ -74,67 +74,7 @@
         <p>Every project below is a live preview, not a mockup. Tech tags show exactly what's under the hood.</p>
       </div>
 
-      <div class="grid-web">
-        <div class="card">
-          <div class="card-top"><span class="card-idx">WEB / 01</span></div>
-          <h3>Fernweg Travel Co.</h3>
-          <p class="desc">Headless booking flow with real-time availability, built to handle traffic spikes during flash sales.</p>
-          <div class="tags">
-            <span class="tag">Next.js</span><span class="tag">Tailwind</span><span class="tag">Stripe</span><span class="tag">Supabase</span>
-          </div>
-          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
-        </div>
-
-        <div class="card">
-          <div class="card-top"><span class="card-idx">WEB / 02</span></div>
-          <h3>Northbound Analytics</h3>
-          <p class="desc">A data dashboard rebuilt from a legacy jQuery app into a fast, componentized SPA with role-based access.</p>
-          <div class="tags">
-            <span class="tag">React</span><span class="tag">Node.js</span><span class="tag">PostgreSQL</span><span class="tag">D3.js</span>
-          </div>
-          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
-        </div>
-
-        <div class="card">
-          <div class="card-top"><span class="card-idx">WEB / 03</span></div>
-          <h3>Kiln &amp; Co. Ceramics</h3>
-          <p class="desc">Storefront and inventory system for a small-batch pottery studio, with a custom order-tracking portal.</p>
-          <div class="tags">
-            <span class="tag">Shopify Hydrogen</span><span class="tag">GraphQL</span><span class="tag">Vite</span>
-          </div>
-          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
-        </div>
-
-        <div class="card">
-          <div class="card-top"><span class="card-idx">WEB / 04</span></div>
-          <h3>Basecamp Climbing Gym</h3>
-          <p class="desc">Membership and class-booking platform with waitlists, waivers, and instructor scheduling.</p>
-          <div class="tags">
-            <span class="tag">Vue 3</span><span class="tag">Express</span><span class="tag">MongoDB</span>
-          </div>
-          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
-        </div>
-
-        <div class="card">
-          <div class="card-top"><span class="card-idx">WEB / 05</span></div>
-          <h3>Verdant Capital</h3>
-          <p class="desc">Investor-facing portal with document rooms, e-signature workflow, and audit-logged access.</p>
-          <div class="tags">
-            <span class="tag">Next.js</span><span class="tag">Prisma</span><span class="tag">Auth0</span>
-          </div>
-          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
-        </div>
-
-        <div class="card">
-          <div class="card-top"><span class="card-idx">WEB / 06</span></div>
-          <h3>Lumen Fitness App</h3>
-          <p class="desc">Progressive web app for workout tracking with offline mode and wearable-device sync.</p>
-          <div class="tags">
-            <span class="tag">React Native</span><span class="tag">Firebase</span><span class="tag">Tailwind</span>
-          </div>
-          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
-        </div>
-      </div>
+      <div class="grid-web" id="webShowcaseGrid"></div>
     </div>
   </section>
 
@@ -201,10 +141,6 @@
       </div>
 
       <form id="loginForm" onsubmit="handleLogin(event)">
-        <div class="field">
-          <label for="loginName" id="loginNameLabel">Your name / company</label>
-          <input type="text" id="loginName" placeholder="e.g. Fernweg Travel Co." required>
-        </div>
         <div class="field">
           <label for="loginEmail">Email</label>
           <input type="email" id="loginEmail" placeholder="you@company.com" required>
@@ -477,8 +413,19 @@
 
     <div class="tabpane" id="adminTab-portfolio">
       <div class="modal-form" style="max-width:720px;">
+        <h3>Web development showcase</h3>
+        <p class="sub-copy" style="margin-bottom:16px;">These cards appear in the public "Web Development" section. Clicking a card on the live site opens the URL you set here in a new tab.</p>
+        <form onsubmit="saveWebPortfolio(event)">
+          <div id="webPortfolioEditorList"></div>
+          <button type="button" class="btn btn-sm" style="margin-top:10px;" onclick="addWebPortfolioRow()">+ Add project</button>
+          <button type="submit" class="btn btn-primary" style="margin-top:18px;">Save web portfolio</button>
+          <div class="form-msg" id="webPortfolioMsg"></div>
+        </form>
+      </div>
+
+      <div class="modal-form" style="max-width:720px;">
         <h3>Video editing showcase reels</h3>
-        <p class="sub-copy" style="margin-bottom:16px;">These cards appear in the public "Video Editing" section on the landing page.</p>
+        <p class="sub-copy" style="margin-bottom:16px;">These cards appear in the public "Video Editing" section on the landing page. Thumbnails are pulled automatically from the video link, and clicking a card plays the reel.</p>
         <form onsubmit="savePortfolio(event)">
           <div id="portfolioEditorList"></div>
           <button type="button" class="btn btn-sm" style="margin-top:10px;" onclick="addPortfolioRow()">+ Add reel</button>

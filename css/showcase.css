@@ -77,3 +77,31 @@ section.section{padding:80px 0;border-bottom:1px solid var(--border);}
 .grad-4{background:linear-gradient(135deg,#FF5C7A,#7a1f34);}
 .grad-5{background:linear-gradient(135deg,#4b5aef,#1c1f5c);}
 .grad-6{background:linear-gradient(135deg,#22c1a0,#0d3d40);}
+
+/* ---------- Video reel modal ---------- */
+.video-modal{
+  display:none;position:fixed;inset:0;z-index:200;
+  background:rgba(6,6,10,0.86);backdrop-filter:blur(4px);
+  align-items:center;justify-content:center;padding:24px;
+}
+.video-modal.open{display:flex;}
+.video-modal-inner{
+  position:relative;width:100%;max-width:900px;
+  display:flex;flex-direction:column;align-items:center;gap:12px;
+}
+.video-modal-close{
+  position:absolute;top:-42px;right:0;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);
+  color:#fff;width:34px;height:34px;border-radius:50%;
+  cursor:pointer;font-size:0.9rem;line-height:1;
+}
+.video-modal-close:hover{background:rgba(255,255,255,0.22);}
+.video-modal-frame-wrap{
+  width:100%;aspect-ratio:16/9;border-radius:var(--radius);overflow:hidden;
+  background:#000;
+}
+.video-modal-frame-wrap.vertical{
+  width:auto;max-width:100%;height:min(80vh,700px);aspect-ratio:9/16;
+}
+.video-modal-frame-wrap iframe{width:100%;height:100%;border:0;display:block;}
+.video-modal-caption{color:rgba(255,255,255,0.85);font-size:0.9rem;text-align:center;}

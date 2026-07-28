@@ -237,7 +237,28 @@
         <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">Enter client portal</button>
         <div class="form-msg" id="loginMsg"></div>
       </form>
-      <p class="auth-note">Demo environment — any email/password combination signs you in. Try the name "Fernweg Travel Co." as a client to see seeded project data.</p>
+
+      <form id="signupForm" style="display:none;" onsubmit="handleSignup(event)">
+        <div class="field">
+          <label for="signupName">Your name / company</label>
+          <input type="text" id="signupName" placeholder="e.g. Fernweg Travel Co." required>
+        </div>
+        <div class="field">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" placeholder="you@company.com" required>
+        </div>
+        <div class="field">
+          <label for="signupPass">Password</label>
+          <input type="password" id="signupPass" placeholder="At least 6 characters" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="signupSubmitBtn">Create account</button>
+        <div class="form-msg" id="signupMsg"></div>
+      </form>
+
+      <p class="auth-note" id="loginDemoNote">Sign in with your client account, or create a new one below.</p>
+      <div style="text-align:center;margin-top:14px;">
+        <span id="authToggleLink" onclick="toggleAuthMode()" style="font-size:0.78rem;color:var(--text-faint);cursor:pointer;">Don't have an account? <strong>Sign up</strong></span>
+      </div>
       <div style="text-align:center;margin-top:18px;">
         <span id="staffAccessLink" onclick="revealStaffLogin()" style="font-size:0.68rem;color:var(--text-faint);opacity:0.55;cursor:pointer;letter-spacing:0.02em;" title="Staff access">· staff sign in ·</span>
       </div>

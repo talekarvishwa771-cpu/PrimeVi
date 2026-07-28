@@ -1,25 +1,29 @@
-/* ==========================================================
-   admin.js — full admin panel:
-   - Overview: at-a-glance stats across all projects
-   - Manage Projects: search/filter/sort table, inline edit
-     (client, title, type, progress, status), delete
-   - Clients: aggregated per-client view, jump-to-filter, bulk delete
-   - Add New Project
-   - Site Settings (see settings.js)
-   - Export data / reset demo data
-   ========================================================== */
-
 const STATUS_LIST = ["Submitted", "In Progress", "In Review", "On Hold", "Completed"];
 
 let adminFilters = { text: "", type: "All", status: "All", sort: "client" };
+let userFilterText = "";
+
+function isFullAdmin(){
+  return currentUser && currentUser.role === "admin";
+}
+
+function applyAdminRoleUI(){
+  const allowed = isFullAdmin() ? null : ["manage"];
+  document.querySelectorAll("#page-admin .portal-tabs button").forEach(b => {
+    b.style.display = (!allowed || allowed.includes(b.dataset.tab)) ? "" : "none";
+  });
+}
 
 function switchAdminTab(tab){
+  applyAdminRoleUI();
+  if(!isFullAdmin()) tab = "manage";
   document.querySelectorAll("#page-admin .portal-tabs button").forEach(b => b.classList.toggle("active", b.dataset.tab === tab));
   document.querySelectorAll("#page-admin .tabpane").forEach(p => p.classList.remove("active"));
   document.getElementById("adminTab-" + tab).classList.add("active");
   if(tab === "overview") renderAdminOverview();
   if(tab === "manage") renderAdmin();
   if(tab === "clients") renderAdminClients();
+  if(tab === "users") renderAdminUsers();
   if(tab === "portfolio") renderPortfolioEditor();
   if(tab === "settings") renderSettingsForm();
 }
@@ -38,6 +42,15 @@ function renderAdminOverview(){
   document.getElementById("ovStatProgress").textContent = avgProgress + "%";
   document.getElementById("ovStatWeb").textContent = webCount;
   document.getElementById("ovStatVideo").textContent = videoCount;
+
+  const earningsCard = document.getElementById("ovStatEarningsCard");
+  if(isFullAdmin()){
+    const totalEarnings = projects.reduce((sum, p) => sum + (Number(p.earning) || 0), 0);
+    earningsCard.style.display = "";
+    document.getElementById("ovStatEarnings").textContent = "$" + totalEarnings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  } else {
+    earningsCard.style.display = "none";
+  }
 
   const maxCount = Math.max(1, ...STATUS_LIST.map(s => projects.filter(p => p.status === s).length));
   document.getElementById("ovStatusBars").innerHTML = STATUS_LIST.map(s => {
@@ -113,6 +126,19 @@ function filterAdminByClient(clientName){
 }
 
 function renderAdmin(){
+  const admin = isFullAdmin();
+  const head = document.getElementById("adminTableHead");
+  head.innerHTML = `
+    <th>Client</th>
+    <th>Project</th>
+    <th>Type</th>
+    <th>Progress</th>
+    <th>Status</th>
+    <th>Footage</th>
+    ${admin ? "<th>Earning</th>" : ""}
+    <th>Actions</th>
+  `;
+
   const list = getFilteredProjects();
   const totalCount = projects.length;
   document.getElementById("adminCount").textContent =
@@ -121,18 +147,19 @@ function renderAdmin(){
       : `${list.length} of ${totalCount} projects`;
 
   const body = document.getElementById("adminTableBody");
+  const colCount = admin ? 8 : 7;
 
   if(list.length === 0){
-    body.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-faint); padding:32px;">No projects match your filters.</td></tr>`;
+    body.innerHTML = `<tr><td colspan="${colCount}" style="text-align:center; color:var(--text-faint); padding:32px;">No projects match your filters.</td></tr>`;
     return;
   }
 
   body.innerHTML = list.map(p => `
     <tr>
-      <td><input type="text" class="row-text" style="width:130px;" value="${escapeHtml(p.client)}" id="client-${p.id}"></td>
-      <td><input type="text" class="row-text" style="width:150px;" value="${escapeHtml(p.title)}" id="title-${p.id}"></td>
+      <td><input type="text" class="row-text" style="width:130px;" value="${escapeHtml(p.client)}" id="client-${p.id}" ${admin ? "" : "disabled"}></td>
+      <td><input type="text" class="row-text" style="width:150px;" value="${escapeHtml(p.title)}" id="title-${p.id}" ${admin ? "" : "disabled"}></td>
       <td>
-        <select class="row-select" id="type-${p.id}">
+        <select class="row-select" id="type-${p.id}" ${admin ? "" : "disabled"}>
           <option value="Web Development" ${p.type === "Web Development" ? "selected" : ""}>Web Development</option>
           <option value="Video Editing" ${p.type === "Video Editing" ? "selected" : ""}>Video Editing</option>
         </select>
@@ -148,92 +175,106 @@ function renderAdmin(){
           ${STATUS_LIST.map(s => `<option value="${s}" ${s === p.status ? "selected" : ""}>${s}</option>`).join("")}
         </select>
       </td>
+      <td>${p.footageLink ? `<a href="${escapeHtml(p.footageLink)}" target="_blank" rel="noopener noreferrer">Open link</a>` : `<span class="mono" style="color:var(--text-faint); font-size:0.76rem;">—</span>`}</td>
+      ${admin ? `<td><input type="number" class="row-text" style="width:90px;" min="0" step="0.01" value="${Number(p.earning) || 0}" id="earning-${p.id}"></td>` : ""}
       <td class="row-actions">
-        <button class="btn btn-sm btn-mint" onclick="saveProject(${p.id})">Save</button>
-        <button class="btn btn-sm btn-ghost" onclick="deleteProject(${p.id})" aria-label="Delete project" title="Delete project">✕</button>
+        <button class="btn btn-sm btn-mint" onclick="saveProject('${p.id}')">Save</button>
+        ${admin ? `<button class="btn btn-sm btn-ghost" onclick="deleteProject('${p.id}')" aria-label="Delete project" title="Delete project">✕</button>` : ""}
       </td>
     </tr>
   `).join("");
 }
 
-function saveProject(id){
+async function saveProject(id){
   const p = projects.find(pr => pr.id === id);
   if(!p) return;
-  const clientVal = document.getElementById("client-" + id).value.trim() || p.client;
-  const titleVal = document.getElementById("title-" + id).value.trim() || p.title;
-  const typeVal = document.getElementById("type-" + id).value;
+  const admin = isFullAdmin();
   const progVal = Math.max(0, Math.min(100, parseInt(document.getElementById("prog-" + id).value, 10) || 0));
   const statusVal = document.getElementById("status-" + id).value;
 
-  p.client = clientVal;
-  p.title = titleVal;
-  p.type = typeVal;
-  p.progress = progVal;
-  p.status = statusVal;
+  const fields = { progress: progVal, status: statusVal };
 
-  // keep milestone "current" marker roughly in sync with progress
-  const doneCount = Math.floor((progVal / 100) * p.milestones.length);
-  p.milestones.forEach((m, i) => {
+  if(admin){
+    fields.client = document.getElementById("client-" + id).value.trim() || p.client;
+    fields.title = document.getElementById("title-" + id).value.trim() || p.title;
+    fields.type = document.getElementById("type-" + id).value;
+    fields.earning = Math.max(0, parseFloat(document.getElementById("earning-" + id).value) || 0);
+  }
+
+  const milestones = p.milestones.map(m => Object.assign({}, m));
+  const doneCount = Math.floor((progVal / 100) * milestones.length);
+  milestones.forEach((m, i) => {
     m.done = i < doneCount;
     m.current = i === doneCount;
   });
   if(statusVal === "Completed"){
-    p.progress = 100;
-    p.milestones.forEach(m => { m.done = true; m.current = false; });
+    fields.progress = 100;
+    milestones.forEach(m => { m.done = true; m.current = false; });
   }
+  fields.milestones = milestones;
 
-  persistState();
-  renderAdmin();
-  showToast(`${p.title} updated — ${p.status}, ${p.progress}%`);
+  try{
+    await updateProjectFields(id, fields);
+    renderAdmin();
+    showToast(`${p.title} updated`);
+  } catch(err){
+    console.error(err);
+    showToast("Save failed — check your connection");
+  }
 }
 
-function deleteProject(id){
+async function deleteProject(id){
   const p = projects.find(pr => pr.id === id);
   if(!p) return;
   if(!confirm(`Delete "${p.title}" for ${p.client}? This can't be undone.`)) return;
-  projects = projects.filter(pr => pr.id !== id);
-  persistState();
-  renderAdmin();
-  showToast(`Deleted: ${p.title}`);
+  try{
+    await deleteProjectRemote(id);
+    renderAdmin();
+    showToast(`Deleted: ${p.title}`);
+  } catch(err){
+    console.error(err);
+    showToast("Delete failed — check your connection");
+  }
 }
 
-function addProject(e){
+async function addProject(e){
   e.preventDefault();
   const client = document.getElementById("newClientName").value.trim();
   const title = document.getElementById("newProjTitle").value.trim();
   const type = document.getElementById("newProjType").value;
   const status = document.getElementById("newProjStatus").value;
   const progress = Math.max(0, Math.min(100, parseInt(document.getElementById("newProjProgress").value, 10) || 0));
+  const earning = Math.max(0, parseFloat(document.getElementById("newProjEarning").value) || 0);
 
-  projects.push({
-    id: nextId++,
-    client: client,
-    title: title,
-    type: type,
-    progress: progress,
-    status: status,
-    milestones: [
-      { name: "Kickoff", done: progress > 0, current: progress === 0 },
-      { name: type === "Web Development" ? "Design" : "Rough cut", done: progress >= 40, current: progress > 0 && progress < 40 },
-      { name: type === "Web Development" ? "Build" : "Color/Sound", done: progress >= 75, current: progress >= 40 && progress < 75 },
-      { name: type === "Web Development" ? "Launch" : "Delivery", done: progress >= 100, current: progress >= 75 && progress < 100 }
-    ]
-  });
+  const matchedUser = allUsers.find(u => u.role === "client" && u.name.trim().toLowerCase() === client.toLowerCase());
 
-  persistState();
+  const data = {
+    client, title, type, progress, status, earning,
+    clientUid: matchedUser ? matchedUser.uid : null,
+    footageLink: "",
+    milestones: defaultMilestones(type, progress)
+  };
 
-  const msg = document.getElementById("newProjMsg");
-  msg.className = "form-msg show ok";
-  msg.textContent = "Project added to the system.";
-  e.target.reset();
-  document.getElementById("newProjProgress").value = 0;
-  showToast("New project added: " + title);
-  setTimeout(() => switchAdminTab('manage'), 700);
+  try{
+    await createProject(data);
+    const msg = document.getElementById("newProjMsg");
+    msg.className = "form-msg show ok";
+    msg.textContent = "Project added to the system.";
+    e.target.reset();
+    document.getElementById("newProjProgress").value = 0;
+    document.getElementById("newProjEarning").value = 0;
+    showToast("New project added: " + title);
+    setTimeout(() => switchAdminTab('manage'), 700);
+  } catch(err){
+    console.error(err);
+    showToast("Could not add project — check your connection");
+  }
 }
 
 /* ---------- Clients ---------- */
 
 function renderAdminClients(){
+  const admin = isFullAdmin();
   const byClient = {};
   projects.forEach(p => {
     const key = p.client.trim();
@@ -253,17 +294,18 @@ function renderAdminClients(){
     const projList = byClient[name];
     const avg = Math.round(projList.reduce((s, p) => s + p.progress, 0) / projList.length);
     const activeCount = projList.filter(p => p.status !== "Completed").length;
+    const earningsTotal = projList.reduce((s, p) => s + (Number(p.earning) || 0), 0);
     const safeName = name.replace(/'/g, "\\'");
     return `
       <div class="client-card">
         <div class="client-card-top">
           <div>
             <h3>${escapeHtml(name)}</h3>
-            <span class="mono" style="font-size:0.76rem; color:var(--text-faint);">${projList.length} project${projList.length === 1 ? "" : "s"} · ${activeCount} active · avg ${avg}%</span>
+            <span class="mono" style="font-size:0.76rem; color:var(--text-faint);">${projList.length} project${projList.length === 1 ? "" : "s"} · ${activeCount} active · avg ${avg}%${admin ? " · $" + earningsTotal.toLocaleString(undefined, { maximumFractionDigits: 2 }) + " earned" : ""}</span>
           </div>
           <div class="client-card-actions">
             <button class="btn btn-sm" onclick="filterAdminByClient('${safeName}')">View projects</button>
-            <button class="btn btn-sm btn-ghost" onclick="deleteClient('${safeName}')" aria-label="Delete all projects for this client" title="Delete all projects for this client">✕</button>
+            ${admin ? `<button class="btn btn-sm btn-ghost" onclick="deleteClient('${safeName}')" aria-label="Delete all projects for this client" title="Delete all projects for this client">✕</button>` : ""}
           </div>
         </div>
         <div class="client-card-tags">
@@ -273,11 +315,79 @@ function renderAdminClients(){
   }).join("");
 }
 
-function deleteClient(name){
-  const count = projects.filter(p => p.client.trim() === name).length;
-  if(!confirm(`Delete all ${count} project(s) for ${name}? This can't be undone.`)) return;
-  projects = projects.filter(p => p.client.trim() !== name);
-  persistState();
-  renderAdminClients();
-  showToast(`Removed all projects for ${name}`);
+async function deleteClient(name){
+  const list = projects.filter(p => p.client.trim() === name);
+  if(!confirm(`Delete all ${list.length} project(s) for ${name}? This can't be undone.`)) return;
+  try{
+    await Promise.all(list.map(p => deleteProjectRemote(p.id)));
+    renderAdminClients();
+    showToast(`Removed all projects for ${name}`);
+  } catch(err){
+    console.error(err);
+    showToast("Delete failed — check your connection");
+  }
+}
+
+/* ---------- Users ---------- */
+
+const STAFF_ROLE_OPTIONS = ["client", "editor", "manager", "admin"];
+
+async function renderAdminUsers(search){
+  if(typeof search === "string") userFilterText = search;
+  const wrap = document.getElementById("userTableBody");
+  const head = document.getElementById("userTableHead");
+  head.innerHTML = `<th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Projects</th><th>Actions</th>`;
+  wrap.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-faint); padding:24px;">Loading users…</td></tr>`;
+
+  try{
+    if(!allUsers.length) await loadUsers();
+  } catch(err){
+    console.error(err);
+    wrap.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-faint); padding:24px;">Could not load users.</td></tr>`;
+    return;
+  }
+
+  const q = userFilterText.trim().toLowerCase();
+  const list = allUsers.filter(u => !q || u.name.toLowerCase().includes(q) || (u.email || "").toLowerCase().includes(q));
+
+  if(list.length === 0){
+    wrap.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-faint); padding:24px;">No users match.</td></tr>`;
+    return;
+  }
+
+  wrap.innerHTML = list.map(u => {
+    const projCount = projects.filter(p => p.clientUid === u.uid || p.client.trim().toLowerCase() === (u.name || "").trim().toLowerCase()).length;
+    return `
+    <tr>
+      <td><input type="text" class="row-text" style="width:140px;" value="${escapeHtml(u.name || "")}" id="uname-${u.uid}"></td>
+      <td><span class="mono" style="font-size:0.78rem;">${escapeHtml(u.email || "")}</span></td>
+      <td><input type="text" class="row-text" style="width:130px;" value="${escapeHtml(u.phone || "")}" id="uphone-${u.uid}"></td>
+      <td>
+        <select class="row-select" id="urole-${u.uid}">
+          ${STAFF_ROLE_OPTIONS.map(r => `<option value="${r}" ${r === u.role ? "selected" : ""}>${r}</option>`).join("")}
+        </select>
+      </td>
+      <td class="mono" style="font-size:0.78rem;">${projCount}</td>
+      <td class="row-actions">
+        <button class="btn btn-sm btn-mint" onclick="saveUserRow('${u.uid}')">Save</button>
+        ${u.email ? `<a class="btn btn-sm" href="mailto:${escapeHtml(u.email)}">Email</a>` : ""}
+        ${u.phone ? `<a class="btn btn-sm" href="tel:${escapeHtml(u.phone.replace(/[^\d+]/g, ""))}">Call</a>` : ""}
+        <button class="btn btn-sm btn-ghost" onclick="filterAdminByClient('${(u.name || "").replace(/'/g, "\\'")}')">Projects</button>
+      </td>
+    </tr>`;
+  }).join("");
+}
+
+async function saveUserRow(uid){
+  const name = document.getElementById("uname-" + uid).value.trim();
+  const phone = document.getElementById("uphone-" + uid).value.trim();
+  const role = document.getElementById("urole-" + uid).value;
+  try{
+    await updateUserFields(uid, { name, phone, role });
+    renderAdminUsers(userFilterText);
+    showToast("User updated");
+  } catch(err){
+    console.error(err);
+    showToast("Update failed — check your connection");
+  }
 }

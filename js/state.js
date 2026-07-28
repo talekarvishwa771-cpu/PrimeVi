@@ -87,7 +87,7 @@ const STORAGE_KEY = "spliceStack.data.v1";
 
 function persistState(){
   try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ projects, nextId, siteSettings }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ projects, nextId, siteSettings, videoShowcase }));
   } catch(e){
     console.warn("Could not save to localStorage", e);
   }
@@ -101,6 +101,7 @@ function loadState(){
     if(Array.isArray(data.projects)) projects = data.projects;
     if(typeof data.nextId === "number") nextId = data.nextId;
     if(data.siteSettings) siteSettings = data.siteSettings;
+    if(Array.isArray(data.videoShowcase)) videoShowcase = data.videoShowcase;
   } catch(e){
     console.warn("Could not load saved data, using seed data", e);
   }
@@ -111,6 +112,18 @@ function resetDemoData(){
   localStorage.removeItem(STORAGE_KEY);
   location.reload();
 }
+
+/* Video editing showcase reels, shown on the public landing page
+   and editable from the admin Portfolio tab. In-memory only —
+   persisted the same way as siteSettings. */
+let videoShowcase = [
+  { title: "Aperture — Brand Film", tag: "COLOR GRADE · SOUND DESIGN", duration: "01:42", gradient: "grad-1" },
+  { title: "Tidal — Product Launch", tag: "MOTION GRAPHICS · SOCIAL CUT", duration: "00:38", gradient: "grad-2" },
+  { title: "Groundwork — Documentary", tag: "LONG-FORM EDIT", duration: "04:12", gradient: "grad-3" },
+  { title: "Pulse — Event Recap", tag: "MULTI-CAM EDIT", duration: "00:22", gradient: "grad-4" },
+  { title: "Northlight — Testimonial Series", tag: "INTERVIEW EDIT", duration: "02:05", gradient: "grad-5" },
+  { title: "Ferrous — Explainer", tag: "2D ANIMATION", duration: "00:55", gradient: "grad-6" }
+];
 
 /* Site-wide settings, editable from the admin Settings tab.
    Drives the page <title>, meta tags, nav brand, footer contact

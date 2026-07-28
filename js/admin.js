@@ -20,6 +20,7 @@ function switchAdminTab(tab){
   if(tab === "overview") renderAdminOverview();
   if(tab === "manage") renderAdmin();
   if(tab === "clients") renderAdminClients();
+  if(tab === "portfolio") renderPortfolioEditor();
   if(tab === "settings") renderSettingsForm();
 }
 

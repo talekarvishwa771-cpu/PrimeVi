@@ -34,7 +34,7 @@ function toEmbedUrl(rawUrl){
 
   // YouTube: watch?v=, youtu.be/, shorts/, or already an /embed/ link
   let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{6,})/);
-  if(m) return "https://www.youtube.com/embed/" + m[1];
+  if(m) return "https://www.youtube.com/embed/" + m[1] + "?autoplay=1&rel=0";
 
   // Google Drive: /file/d/FILEID/... or open?id=FILEID, or already /preview
   m = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
@@ -44,6 +44,25 @@ function toEmbedUrl(rawUrl){
 
   // Unrecognized host — try the raw URL directly as a last resort
   return url;
+}
+
+/* Derive a real thumbnail image from a pasted video link, so showcase
+   cards show an actual preview frame instead of just a flat color.
+   Falls back to null (caller keeps the gradient placeholder) when the
+   host isn't recognized. */
+function getVideoThumbnail(rawUrl){
+  if(!rawUrl) return null;
+  const url = rawUrl.trim();
+
+  let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{6,})/);
+  if(m) return "https://img.youtube.com/vi/" + m[1] + "/hqdefault.jpg";
+
+  m = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if(m) return "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w640";
+  m = url.match(/drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/);
+  if(m) return "https://drive.google.com/thumbnail?id=" + m[1] + "&sz=w640";
+
+  return null;
 }
 
 function openVideoModal(rawUrl, title, orientation){
@@ -81,9 +100,11 @@ function renderVideoShowcasePublic(){
     const clickAttr = hasVideo
       ? 'onclick="openVideoModal(\'' + safeUrl + '\', \'' + safeTitle + '\', \'' + v.orientation + '\')" role="button" tabindex="0" style="cursor:pointer;"'
       : "";
+    const thumb = hasVideo ? getVideoThumbnail(v.videoUrl) : null;
+    const thumbImg = thumb ? '<img class="vthumb-img" src="' + escapeHtml(thumb) + '" alt="" loading="lazy" onerror="this.remove()">' : "";
     return '' +
     '<div class="vcard" ' + clickAttr + '>' +
-      '<div class="vthumb ' + (v.orientation === "9:16" ? "vertical " : "") + escapeHtml(v.gradient) + '"><div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">' + escapeHtml(v.duration) + '</span></div>' +
+      '<div class="vthumb ' + (v.orientation === "9:16" ? "vertical " : "") + escapeHtml(v.gradient) + '">' + thumbImg + '<div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">' + escapeHtml(v.duration) + '</span></div>' +
       '<div class="vmeta"><h4>' + escapeHtml(v.title) + '</h4><span>' + escapeHtml(v.tag) + '</span></div>' +
     '</div>';
   };
@@ -148,6 +169,143 @@ function removePortfolioRow(index){
   syncPortfolioFromDOM();
   videoShowcase.splice(index, 1);
   renderPortfolioEditor();
+}
+
+/* ==========================================================
+   Web development showcase — same pattern as the video reels
+   above, but for the "Web Development" cards. Stored separately
+   in Firestore (siteData/webPortfolio) and editable in the admin
+   Portfolio tab. Clicking a card opens the project's real URL.
+   ========================================================== */
+
+async function loadWebPortfolioFromFirestore(){
+  try {
+    const doc = await db.collection("siteData").doc("webPortfolio").get();
+    if(doc.exists && Array.isArray(doc.data().items)){
+      webShowcase = doc.data().items;
+      renderWebShowcasePublic();
+      renderWebPortfolioEditor(); // no-op if admin tab isn't open yet, harmless
+    }
+  } catch(err) {
+    console.warn("Could not load web portfolio from Firestore, using local data.", err);
+  }
+}
+
+function openWebLink(link){
+  if(!link || !link.trim()){
+    showToast("No link set for this project");
+    return;
+  }
+  window.open(link.trim(), "_blank", "noopener,noreferrer");
+}
+
+function renderWebShowcasePublic(){
+  const wrap = document.getElementById("webShowcaseGrid");
+  if(!wrap) return;
+
+  if(webShowcase.length === 0){
+    wrap.innerHTML = `<p style="color:var(--text-dim); font-size:0.9rem;">No web projects added yet.</p>`;
+    return;
+  }
+
+  wrap.innerHTML = webShowcase.map((w, i) => {
+    const hasLink = !!(w.link && w.link.trim());
+    const safeLink = escapeHtml(w.link || "").replace(/'/g, "&#39;");
+    const clickAttr = hasLink
+      ? 'onclick="openWebLink(\'' + safeLink + '\')" role="button" tabindex="0" style="cursor:pointer;"'
+      : "";
+    const tags = (w.tags || "").split(",").map(t => t.trim()).filter(Boolean);
+    return '' +
+    '<div class="card" ' + clickAttr + '>' +
+      '<div class="card-top"><span class="card-idx">WEB / ' + String(i + 1).padStart(2, "0") + '</span></div>' +
+      '<h3>' + escapeHtml(w.title) + '</h3>' +
+      '<p class="desc">' + escapeHtml(w.desc || "") + '</p>' +
+      '<div class="tags">' + tags.map(t => '<span class="tag">' + escapeHtml(t) + '</span>').join("") + '</div>' +
+      (hasLink
+        ? '<a class="preview-link" href="' + escapeHtml(w.link) + '" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();">▸ View live preview</a>'
+        : '<span class="preview-link" style="opacity:0.5;">▸ No link set</span>') +
+    '</div>';
+  }).join("");
+}
+
+/* ---------- Admin: Web Portfolio editor ---------- */
+
+function renderWebPortfolioEditor(){
+  const wrap = document.getElementById("webPortfolioEditorList");
+  if(!wrap) return;
+  wrap.innerHTML = webShowcase.map((w, i) => `
+    <div class="feature-row" style="flex-wrap:wrap;">
+      <div class="feature-row-fields">
+        <input type="text" class="row-text" data-web-title="${i}" value="${escapeHtml(w.title)}" placeholder="Project title">
+        <input type="text" class="row-text" data-web-desc="${i}" value="${escapeHtml(w.desc || "")}" placeholder="Short description">
+      </div>
+      <input type="text" class="row-text" data-web-tags="${i}" value="${escapeHtml(w.tags || "")}" placeholder="Tech tags, comma separated (e.g. Next.js, Tailwind)" style="width:100%;margin-top:8px;">
+      <input type="text" class="row-text" data-web-link="${i}" value="${escapeHtml(w.link || "")}" placeholder="Live site URL (opens when the card is clicked)" style="width:100%;margin-top:8px;">
+      <button type="button" class="btn btn-sm btn-ghost" onclick="removeWebPortfolioRow(${i})" aria-label="Remove project">✕</button>
+    </div>
+  `).join("");
+}
+
+function syncWebPortfolioFromDOM(){
+  const titleInputs = document.querySelectorAll("[data-web-title]");
+  const descInputs = document.querySelectorAll("[data-web-desc]");
+  const tagsInputs = document.querySelectorAll("[data-web-tags]");
+  const linkInputs = document.querySelectorAll("[data-web-link]");
+  const items = [];
+  titleInputs.forEach((input, i) => {
+    items.push({
+      title: input.value,
+      desc: descInputs[i] ? descInputs[i].value : "",
+      tags: tagsInputs[i] ? tagsInputs[i].value : "",
+      link: linkInputs[i] ? linkInputs[i].value.trim() : ""
+    });
+  });
+  webShowcase = items;
+}
+
+function addWebPortfolioRow(){
+  syncWebPortfolioFromDOM();
+  webShowcase.push({ title: "", desc: "", tags: "", link: "" });
+  renderWebPortfolioEditor();
+}
+
+function removeWebPortfolioRow(index){
+  syncWebPortfolioFromDOM();
+  webShowcase.splice(index, 1);
+  renderWebPortfolioEditor();
+}
+
+async function saveWebPortfolio(e){
+  e.preventDefault();
+  syncWebPortfolioFromDOM();
+  // drop fully-empty rows
+  webShowcase = webShowcase.filter(w => w.title.trim() || w.desc.trim());
+
+  const msg = document.getElementById("webPortfolioMsg");
+  if(msg){
+    msg.className = "form-msg show";
+    msg.textContent = "Saving...";
+  }
+
+  try {
+    await db.collection("siteData").doc("webPortfolio").set({ items: webShowcase });
+
+    renderWebShowcasePublic();
+    renderWebPortfolioEditor();
+
+    if(msg){
+      msg.className = "form-msg show ok";
+      msg.textContent = "Web portfolio saved.";
+    }
+    showToast("Web portfolio saved");
+  } catch(err) {
+    console.error("Firestore save failed", err);
+    if(msg){
+      msg.className = "form-msg show err";
+      msg.textContent = "Couldn't save — check your connection or Firestore permissions.";
+    }
+    showToast("Save failed");
+  }
 }
 
 async function savePortfolio(e){

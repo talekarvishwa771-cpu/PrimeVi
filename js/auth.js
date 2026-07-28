@@ -5,6 +5,15 @@
 
 // selectedRole is already declared as a global in state.js — reuse it here
 
+// True while handleLogin/handleSignup are actively running. Signing in
+// with Firebase Auth fires onAuthStateChanged almost immediately — often
+// before this file's own role-check has finished — which was causing the
+// session-restore listener below to navigate on its own (ignoring which
+// role tab the user picked) before handleLogin got a chance to run its
+// client-vs-staff check. This flag makes handleLogin/handleSignup the only
+// place that decides where to navigate during an explicit login attempt.
+let authFlowInProgress = false;
+
 function setRole(role) {
   selectedRole = role;
   document.getElementById("roleClientBtn").classList.toggle("active", role === "client");
@@ -21,6 +30,7 @@ async function handleLogin(event) {
   const pass = document.getElementById("loginPass").value;
   const msgEl = document.getElementById("loginMsg");
   msgEl.textContent = "Signing in...";
+  authFlowInProgress = true;
 
   try {
     const cred = await auth.signInWithEmailAndPassword(email, pass);
@@ -70,6 +80,8 @@ async function handleLogin(event) {
     }
   } catch (err) {
     msgEl.textContent = friendlyAuthError(err.code);
+  } finally {
+    authFlowInProgress = false;
   }
 }
 
@@ -81,6 +93,7 @@ async function handleSignup(event) {
   const pass = document.getElementById("signupPass").value;
   const msgEl = document.getElementById("signupMsg");
   msgEl.textContent = "Creating account...";
+  authFlowInProgress = true;
 
   try {
     // New signups are always client accounts. Staff/admin accounts are
@@ -105,6 +118,8 @@ async function handleSignup(event) {
     renderClient();
   } catch (err) {
     msgEl.textContent = friendlyAuthError(err.code);
+  } finally {
+    authFlowInProgress = false;
   }
 }
 
@@ -157,7 +172,9 @@ function friendlyAuthError(code) {
 }
 
 function revealStaffLogin() {
-  document.getElementById("roleToggle").style.display = "flex";
+  // Kept intentionally unused: /#hello never reveals the Client/Staff
+  // toggle — it logs in as staff/admin only, no way to switch to client
+  // from this route. See checkHiddenRoute() below.
 }
 
 auth.onAuthStateChanged(async function(user){
@@ -165,18 +182,20 @@ auth.onAuthStateChanged(async function(user){
     currentUser = null;
     return;
   }
+  if(authFlowInProgress) return; // handleLogin/handleSignup already own navigation for this attempt
   if(currentUser) return;
   try{
-    const cached = sessionStorage.getItem("currentUser");
-    if(cached){
-      currentUser = JSON.parse(cached);
-    } else {
-      const doc = await db.collection("users").doc(user.uid).get();
-      if(!doc.exists) return;
-      const d = doc.data();
-      currentUser = { uid: user.uid, role: d.role, name: d.name, email: d.email || user.email, phone: d.phone || "", clientId: d.clientId || null };
-      sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
-    }
+    // Always re-fetch the role fresh from Firestore on session restore
+    // (page refresh, reopened tab) instead of trusting the cached copy
+    // in sessionStorage. A cached role can go stale — e.g. an account
+    // promoted to admin from the Users tab would otherwise keep showing
+    // the restricted "Manage Projects only" view until an explicit
+    // sign-out + sign-in, since the old cached role never got refreshed.
+    const doc = await db.collection("users").doc(user.uid).get();
+    if(!doc.exists) return;
+    const d = doc.data();
+    currentUser = { uid: user.uid, role: d.role, name: d.name, email: d.email || user.email, phone: d.phone || "", clientId: d.clientId || null };
+    sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
     await loadProjects();
     renderNav();
     if(location.hash.toLowerCase() !== "#hello") goToDashboard();
@@ -188,8 +207,14 @@ auth.onAuthStateChanged(async function(user){
 function checkHiddenRoute() {
   if (location.hash.toLowerCase() === "#hello") {
     navigate("login");
-    revealStaffLogin();
+    // /#hello is the admin-only back door — no Client/Staff toggle here,
+    // it always logs in as staff/admin. The regular "Client Login"
+    // buttons on the public site are the only way to reach a client
+    // sign-in, and they always preset the client role (see nav.js /
+    // index.html), so the two flows never cross.
     setRole("staff");
+    document.getElementById("loginHeading").textContent = "Admin sign in";
+    document.getElementById("loginSubCopy").textContent = "Restricted access — agency staff only.";
     history.replaceState(null, "", location.pathname + location.search);
   }
 }

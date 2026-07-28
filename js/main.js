@@ -6,3 +6,4 @@ loadState();
 renderNav();
 applySiteSettings();
 renderFeaturesPublic();
+renderVideoShowcasePublic();

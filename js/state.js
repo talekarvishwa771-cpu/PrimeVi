@@ -117,12 +117,12 @@ function resetDemoData(){
    and editable from the admin Portfolio tab. In-memory only —
    persisted the same way as siteSettings. */
 let videoShowcase = [
-  { title: "Aperture — Brand Film", tag: "COLOR GRADE · SOUND DESIGN", duration: "01:42", gradient: "grad-1", orientation: "16:9" },
-  { title: "Tidal — Product Launch", tag: "MOTION GRAPHICS · SOCIAL CUT", duration: "00:38", gradient: "grad-2", orientation: "9:16" },
-  { title: "Groundwork — Documentary", tag: "LONG-FORM EDIT", duration: "04:12", gradient: "grad-3", orientation: "16:9" },
-  { title: "Pulse — Event Recap", tag: "MULTI-CAM EDIT", duration: "00:22", gradient: "grad-4", orientation: "9:16" },
-  { title: "Northlight — Testimonial Series", tag: "INTERVIEW EDIT", duration: "02:05", gradient: "grad-5", orientation: "16:9" },
-  { title: "Ferrous — Explainer", tag: "2D ANIMATION", duration: "00:55", gradient: "grad-6", orientation: "9:16" }
+  { title: "Aperture — Brand Film", tag: "COLOR GRADE · SOUND DESIGN", duration: "01:42", gradient: "grad-1", orientation: "16:9", videoUrl: "" },
+  { title: "Tidal — Product Launch", tag: "MOTION GRAPHICS · SOCIAL CUT", duration: "00:38", gradient: "grad-2", orientation: "9:16", videoUrl: "" },
+  { title: "Groundwork — Documentary", tag: "LONG-FORM EDIT", duration: "04:12", gradient: "grad-3", orientation: "16:9", videoUrl: "" },
+  { title: "Pulse — Event Recap", tag: "MULTI-CAM EDIT", duration: "00:22", gradient: "grad-4", orientation: "9:16", videoUrl: "" },
+  { title: "Northlight — Testimonial Series", tag: "INTERVIEW EDIT", duration: "02:05", gradient: "grad-5", orientation: "16:9", videoUrl: "" },
+  { title: "Ferrous — Explainer", tag: "2D ANIMATION", duration: "00:55", gradient: "grad-6", orientation: "9:16", videoUrl: "" }
 ];
 
 /* Site-wide settings, editable from the admin Settings tab.
@@ -143,4 +143,3 @@ let siteSettings = {
     { name: "Ongoing Maintenance", description: "Monthly retainer covering updates, backups, and uptime monitoring." }
   ]
 };
- 

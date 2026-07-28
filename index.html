@@ -149,32 +149,7 @@
         <p>Color, pacing, and sound design across brand films, social cuts, and long-form documentary work.</p>
       </div>
 
-      <div class="grid-video">
-        <div class="vcard">
-          <div class="vthumb grad-1"><div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">01:42</span></div>
-          <div class="vmeta"><h4>Aperture — Brand Film</h4><span>COLOR GRADE · SOUND DESIGN</span></div>
-        </div>
-        <div class="vcard">
-          <div class="vthumb grad-2"><div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">00:38</span></div>
-          <div class="vmeta"><h4>Tidal — Product Launch</h4><span>MOTION GRAPHICS · SOCIAL CUT</span></div>
-        </div>
-        <div class="vcard">
-          <div class="vthumb grad-3"><div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">04:12</span></div>
-          <div class="vmeta"><h4>Groundwork — Documentary</h4><span>LONG-FORM EDIT</span></div>
-        </div>
-        <div class="vcard">
-          <div class="vthumb grad-4"><div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">00:22</span></div>
-          <div class="vmeta"><h4>Pulse — Event Recap</h4><span>MULTI-CAM EDIT</span></div>
-        </div>
-        <div class="vcard">
-          <div class="vthumb grad-5"><div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">02:05</span></div>
-          <div class="vmeta"><h4>Northlight — Testimonial Series</h4><span>INTERVIEW EDIT</span></div>
-        </div>
-        <div class="vcard">
-          <div class="vthumb grad-6"><div class="vplay" role="button" aria-label="Play preview"></div><span class="vtime mono">00:55</span></div>
-          <div class="vmeta"><h4>Ferrous — Explainer</h4><span>2D ANIMATION</span></div>
-        </div>
-      </div>
+      <div class="grid-video" id="videoShowcaseGrid"></div>
     </div>
   </section>
 
@@ -337,6 +312,7 @@
       <button data-tab="manage" onclick="switchAdminTab('manage')">Manage Projects</button>
       <button data-tab="clients" onclick="switchAdminTab('clients')">Clients</button>
       <button data-tab="new" onclick="switchAdminTab('new')">Add New Project</button>
+      <button data-tab="portfolio" onclick="switchAdminTab('portfolio')">Portfolio</button>
       <button data-tab="settings" onclick="switchAdminTab('settings')">Site Settings</button>
     </div>
 
@@ -472,6 +448,19 @@
       </div>
     </div>
 
+    <div class="tabpane" id="adminTab-portfolio">
+      <div class="modal-form" style="max-width:720px;">
+        <h3>Video editing showcase reels</h3>
+        <p class="sub-copy" style="margin-bottom:16px;">These cards appear in the public "Video Editing" section on the landing page.</p>
+        <form onsubmit="savePortfolio(event)">
+          <div id="portfolioEditorList"></div>
+          <button type="button" class="btn btn-sm" style="margin-top:10px;" onclick="addPortfolioRow()">+ Add reel</button>
+          <button type="submit" class="btn btn-primary" style="margin-top:18px;">Save portfolio</button>
+          <div class="form-msg" id="portfolioMsg"></div>
+        </form>
+      </div>
+    </div>
+
     <div class="tabpane" id="adminTab-settings">
       <div class="modal-form" style="max-width:720px;">
         <h3>Site &amp; SEO settings</h3>
@@ -543,6 +532,7 @@
 <script src="js/auth.js"></script>
 <script src="js/client.js"></script>
 <script src="js/admin.js"></script>
+<script src="js/portfolio.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>

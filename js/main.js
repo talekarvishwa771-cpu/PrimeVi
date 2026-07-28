@@ -7,3 +7,4 @@ renderNav();
 applySiteSettings();
 renderFeaturesPublic();
 renderVideoShowcasePublic();
+loadPortfolioFromFirestore();

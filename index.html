@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Splice/Stack — Web Development &amp; Video Editing Studio</title>
+<meta name="description" content="Splice/Stack is a web development and video editing studio. We build production-ready websites and cut brand films, social content, and documentaries.">
+<meta name="keywords" content="web development, video editing, web design, video production, brand films, agency">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/variables.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/landing.css">
+<link rel="stylesheet" href="css/showcase.css">
+<link rel="stylesheet" href="css/features.css">
+<link rel="stylesheet" href="css/cta.css">
+<link rel="stylesheet" href="css/portal.css">
+<link rel="stylesheet" href="css/whatsapp.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- ============ TOP NAV ============ -->
+<div class="topnav">
+  <div class="topnav-inner">
+    <div class="brand" onclick="navigate('landing')" style="cursor:pointer;">
+      <span id="brandNameMain">SPLICE</span><span class="slash" id="brandSlash">/</span><span id="brandNameSecond">STACK</span>
+      <span class="sub">STUDIO.REEL</span>
+    </div>
+    <div class="nav-links" id="navLinks">
+      <a class="navbtn" href="#work">Work</a>
+      <button onclick="navigate('login'); presetRole('client')">Client Login</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE: LANDING (PUBLIC PORTFOLIO) ============ -->
+<div class="page active" id="page-landing">
+
+  <section class="hero">
+    <div class="wrap">
+      <div class="eyebrow">00:00:00:00 — OPENING SHOT</div>
+      <h1>We <em>cut code</em> and <em>cut footage</em>,<br>frame by frame.</h1>
+      <p class="lead">Splice/Stack is a two-track studio: one team ships production web builds, the other edits films that hold attention. Same discipline, different timeline.</p>
+      <div class="hero-actions">
+        <a href="#work" class="btn btn-primary">See the reel</a>
+        <button class="btn" onclick="navigate('login'); presetRole('client')">Client sign in</button>
+      </div>
+
+      <div class="timeline-strip" aria-hidden="true">
+        <div class="timeline-label">V2</div>
+        <div class="timeline-track">
+          <div class="timeline-clip clip-a"></div>
+          <div class="timeline-clip clip-b"></div>
+          <div class="timeline-clip clip-c"></div>
+          <div class="timeline-clip clip-d"></div>
+          <div class="playhead"></div>
+        </div>
+        <div class="timeline-label">01:04:22</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WEB DEV SHOWCASE -->
+  <section class="section" id="work">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">TRACK 01 — WEB DEVELOPMENT</div>
+          <h2>Builds shipped to production</h2>
+        </div>
+        <p>Every project below is a live preview, not a mockup. Tech tags show exactly what's under the hood.</p>
+      </div>
+
+      <div class="grid-web">
+        <div class="card">
+          <div class="card-top"><span class="card-idx">WEB / 01</span></div>
+          <h3>Fernweg Travel Co.</h3>
+          <p class="desc">Headless booking flow with real-time availability, built to handle traffic spikes during flash sales.</p>
+          <div class="tags">
+            <span class="tag">Next.js</span><span class="tag">Tailwind</span><span class="tag">Stripe</span><span class="tag">Supabase</span>
+          </div>
+          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top"><span class="card-idx">WEB / 02</span></div>
+          <h3>Northbound Analytics</h3>
+          <p class="desc">A data dashboard rebuilt from a legacy jQuery app into a fast, componentized SPA with role-based access.</p>
+          <div class="tags">
+            <span class="tag">React</span><span class="tag">Node.js</span><span class="tag">PostgreSQL</span><span class="tag">D3.js</span>
+          </div>
+          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top"><span class="card-idx">WEB / 03</span></div>
+          <h3>Kiln &amp; Co. Ceramics</h3>
+          <p class="desc">Storefront and inventory system for a small-batch pottery studio, with a custom order-tracking portal.</p>
+          <div class="tags">
+            <span class="tag">Shopify Hydrogen</span><span class="tag">GraphQL</span><span class="tag">Vite</span>
+          </div>
+          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top"><span class="card-idx">WEB / 04</span></div>
+          <h3>Basecamp Climbing Gym</h3>
+          <p class="desc">Membership and class-booking platform with waitlists, waivers, and instructor scheduling.</p>
+          <div class="tags">
+            <span class="tag">Vue 3</span><span class="tag">Express</span><span class="tag">MongoDB</span>
+          </div>
+          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top"><span class="card-idx">WEB / 05</span></div>
+          <h3>Verdant Capital</h3>
+          <p class="desc">Investor-facing portal with document rooms, e-signature workflow, and audit-logged access.</p>
+          <div class="tags">
+            <span class="tag">Next.js</span><span class="tag">Prisma</span><span class="tag">Auth0</span>
+          </div>
+          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
+        </div>
+
+        <div class="card">
+          <div class="card-top"><span class="card-idx">WEB / 06</span></div>
+          <h3>Lumen Fitness App</h3>
+          <p class="desc">Progressive web app for workout tracking with offline mode and wearable-device sync.</p>
+          <div class="tags">
+            <span class="tag">React Native</span><span class="tag">Firebase</span><span class="tag">Tailwind</span>
+          </div>
+          <a class="preview-link" href="#" onclick="return false;">▸ View live preview</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VIDEO EDITING SHOWCASE -->
+  <section class="section">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">TRACK 02 — VIDEO EDITING</div>
+          <h2>Cuts that hold the frame</h2>
+        </div>
+        <p>Color, pacing, and sound design across brand films, social cuts, and long-form documentary work.</p>
+      </div>
+
+      <div class="subsection-label">Horizontal · 16:9</div>
+      <div class="grid-video" id="videoShowcaseGrid169"></div>
+
+      <div class="subsection-label" style="margin-top:32px;">Vertical · 9:16</div>
+      <div class="grid-video-vertical" id="videoShowcaseGrid916"></div>
+    </div>
+  </section>
+
+  <!-- SERVICES & ADD-ONS (admin-editable via Settings tab) -->
+  <section class="section" id="features">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">SERVICES &amp; ADD-ONS</div>
+          <h2>What's included, and what you can add</h2>
+        </div>
+        <p>Managed from the admin Settings tab, so this list always matches what the team currently offers.</p>
+      </div>
+      <div class="features-grid" id="featuresList"></div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="wrap">
+      <div class="eyebrow" style="justify-content:center;">READY TO ROLL</div>
+      <h2>Have a brief? Submit it through the client portal.</h2>
+      <p>Sign in to track progress, review milestones, and send new project briefs directly to the team.</p>
+      <button class="btn btn-primary" onclick="navigate('login'); presetRole('client')">Go to client portal</button>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div>© 2026 Splice/Stack Studio. Web development &amp; video editing, cut on the same timeline.</div>
+      <div class="footer-contact" id="footerContact"></div>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ PAGE: LOGIN ============ -->
+<div class="page" id="page-login">
+  <div class="auth-shell">
+    <div class="auth-card">
+      <h2 id="loginHeading">Sign in</h2>
+      <p class="sub-copy" id="loginSubCopy">Enter your details to reach your project dashboard.</p>
+
+      <div class="role-toggle" id="roleToggle" style="display:none;">
+        <button id="roleClientBtn" class="active" onclick="setRole('client')" type="button">Client</button>
+        <button id="roleAdminBtn" onclick="setRole('staff')" type="button">Staff</button>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="field">
+          <label for="loginName" id="loginNameLabel">Your name / company</label>
+          <input type="text" id="loginName" placeholder="e.g. Fernweg Travel Co." required>
+        </div>
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="you@company.com" required>
+        </div>
+        <div class="field">
+          <label for="loginPass">Password</label>
+          <input type="password" id="loginPass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="loginSubmitBtn">Enter client portal</button>
+        <div class="form-msg" id="loginMsg"></div>
+      </form>
+
+      <form id="signupForm" style="display:none;" onsubmit="handleSignup(event)">
+        <div class="field">
+          <label for="signupName">Your name / company</label>
+          <input type="text" id="signupName" placeholder="e.g. Fernweg Travel Co." required>
+        </div>
+        <div class="field">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" placeholder="you@company.com" required>
+        </div>
+        <div class="field">
+          <label for="signupPhone">Phone</label>
+          <input type="tel" id="signupPhone" placeholder="e.g. +1 555 123 4567">
+        </div>
+        <div class="field">
+          <label for="signupPass">Password</label>
+          <input type="password" id="signupPass" placeholder="At least 6 characters" required minlength="6">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block" id="signupSubmitBtn">Create account</button>
+        <div class="form-msg" id="signupMsg"></div>
+      </form>
+
+      <p class="auth-note" id="loginDemoNote">Sign in with your client account, or create a new one below.</p>
+      <div style="text-align:center;margin-top:14px;">
+        <button type="button" id="authToggleLink" onclick="toggleAuthMode()" style="background:none;border:none;font-size:0.78rem;color:var(--text-faint);cursor:pointer;user-select:none;-webkit-user-select:none;padding:8px;">Don't have an account? <strong>Sign up</strong></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE: CLIENT PORTAL ============ -->
+<div class="page" id="page-client">
+  <div class="wrap">
+    <div class="portal-header">
+      <div class="eyebrow">CLIENT PORTAL</div>
+      <h1 id="clientGreetName">Welcome back</h1>
+      <p class="greet">Track active work and send new briefs to the Splice/Stack team.</p>
+    </div>
+
+    <div class="portal-tabs">
+      <button class="active" data-tab="active" onclick="switchClientTab('active')">Active Projects</button>
+      <button data-tab="submit" onclick="switchClientTab('submit')">Submit New Brief</button>
+    </div>
+
+    <div class="tabpane active" id="clientTab-active">
+      <div id="clientProjectsList"></div>
+    </div>
+
+    <div class="tabpane" id="clientTab-submit">
+      <div class="modal-form" style="max-width:640px;">
+        <h3>Submit a project brief</h3>
+        <form onsubmit="submitBrief(event)">
+          <div class="form-grid">
+            <div class="field">
+              <label>Project title</label>
+              <input type="text" id="briefTitle" required placeholder="e.g. Homepage redesign">
+            </div>
+            <div class="field">
+              <label>Project type</label>
+              <select id="briefType">
+                <option value="Web Development">Web Development</option>
+                <option value="Video Editing">Video Editing</option>
+              </select>
+            </div>
+          </div>
+          <div class="field">
+            <label>Brief / description</label>
+            <textarea id="briefDesc" required placeholder="Describe goals, scope, and any references..."></textarea>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Target deadline</label>
+              <input type="date" id="briefDeadline">
+            </div>
+            <div class="field">
+              <label>Estimated budget (USD)</label>
+              <input type="text" id="briefBudget" placeholder="e.g. 5,000">
+            </div>
+          </div>
+          <div class="field">
+            <label>Raw footage / asset link (optional)</label>
+            <input type="text" id="briefFootage" placeholder="Google Drive, YouTube, WeTransfer, etc.">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit brief</button>
+          <div class="form-msg" id="briefMsg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE: ADMIN DASHBOARD ============ -->
+<div class="page" id="page-admin">
+  <div class="wrap">
+    <div class="portal-header">
+      <div class="eyebrow">AGENCY ADMIN</div>
+      <h1>All client projects</h1>
+      <p class="greet">Update progress, change status, and add new projects to the system.</p>
+    </div>
+
+    <div class="portal-tabs">
+      <button class="active" data-tab="overview" onclick="switchAdminTab('overview')">Overview</button>
+      <button data-tab="manage" onclick="switchAdminTab('manage')">Manage Projects</button>
+      <button data-tab="clients" onclick="switchAdminTab('clients')">Clients</button>
+      <button data-tab="users" onclick="switchAdminTab('users')">Users</button>
+      <button data-tab="new" onclick="switchAdminTab('new')">Add New Project</button>
+      <button data-tab="portfolio" onclick="switchAdminTab('portfolio')">Portfolio</button>
+      <button data-tab="settings" onclick="switchAdminTab('settings')">Site Settings</button>
+    </div>
+
+    <div class="tabpane active" id="adminTab-overview">
+      <div class="stat-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total projects</span>
+          <span class="stat-value" id="ovStatTotal">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Clients</span>
+          <span class="stat-value" id="ovStatClients">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Avg. progress</span>
+          <span class="stat-value" id="ovStatProgress">0%</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Web dev</span>
+          <span class="stat-value" id="ovStatWeb">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Video editing</span>
+          <span class="stat-value" id="ovStatVideo">0</span>
+        </div>
+        <div class="stat-card" id="ovStatEarningsCard" style="display:none;">
+          <span class="stat-label">Total earnings</span>
+          <span class="stat-value" id="ovStatEarnings">$0</span>
+        </div>
+      </div>
+
+      <div class="overview-grid">
+        <div class="modal-form" style="margin-bottom:0;">
+          <h3>Projects by status</h3>
+          <div id="ovStatusBars"></div>
+        </div>
+        <div class="modal-form" style="margin-bottom:0;">
+          <h3>Recently added</h3>
+          <div id="ovRecent"></div>
+        </div>
+      </div>
+
+      <div class="admin-toolbar" style="margin-top:24px;">
+        <button class="btn btn-sm" onclick="exportData()">⬇ Export data (JSON)</button>
+        <button class="btn btn-sm btn-ghost" onclick="resetDemoData()">Reset demo data</button>
+      </div>
+    </div>
+
+    <div class="tabpane" id="adminTab-manage">
+      <div class="admin-toolbar">
+        <span class="mono" style="color:var(--text-faint); font-size:0.8rem;" id="adminCount">0 projects</span>
+      </div>
+      <div class="filter-bar">
+        <input type="text" class="row-text" id="adminSearch" placeholder="Search client or project…" oninput="setAdminFilterText(this.value)" style="flex:1; min-width:180px;">
+        <select class="row-select" onchange="setAdminFilterType(this.value)">
+          <option value="All">All types</option>
+          <option value="Web Development">Web Development</option>
+          <option value="Video Editing">Video Editing</option>
+        </select>
+        <select class="row-select" onchange="setAdminFilterStatus(this.value)">
+          <option value="All">All statuses</option>
+          <option value="Submitted">Submitted</option>
+          <option value="In Progress">In Progress</option>
+          <option value="In Review">In Review</option>
+          <option value="On Hold">On Hold</option>
+          <option value="Completed">Completed</option>
+        </select>
+        <select class="row-select" onchange="setAdminSort(this.value)">
+          <option value="client">Sort: Client</option>
+          <option value="title">Sort: Project title</option>
+          <option value="status">Sort: Status</option>
+          <option value="progress-desc">Sort: Progress (high→low)</option>
+          <option value="progress-asc">Sort: Progress (low→high)</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="adminTableHead"></tr>
+          </thead>
+          <tbody id="adminTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tabpane" id="adminTab-clients">
+      <div id="adminClientsList"></div>
+    </div>
+
+    <div class="tabpane" id="adminTab-users">
+      <div class="admin-toolbar">
+        <input type="text" class="row-text" id="userSearch" placeholder="Search users by name or email…" oninput="renderAdminUsers(this.value)" style="flex:1; min-width:220px;">
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr id="userTableHead"></tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="tabpane" id="adminTab-new">
+      <div class="modal-form" style="max-width:640px;">
+        <h3>Add a new client project</h3>
+        <form onsubmit="addProject(event)">
+          <div class="form-grid">
+            <div class="field">
+              <label>Client name</label>
+              <input type="text" id="newClientName" required placeholder="e.g. Northbound Analytics">
+            </div>
+            <div class="field">
+              <label>Project title</label>
+              <input type="text" id="newProjTitle" required placeholder="e.g. Dashboard v2 rebuild">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Type</label>
+              <select id="newProjType">
+                <option value="Web Development">Web Development</option>
+                <option value="Video Editing">Video Editing</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Initial status</label>
+              <select id="newProjStatus">
+                <option value="Submitted">Submitted</option>
+                <option value="In Progress">In Progress</option>
+                <option value="In Review">In Review</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Initial progress (%)</label>
+              <input type="number" id="newProjProgress" min="0" max="100" value="0">
+            </div>
+            <div class="field">
+              <label>Earning (USD)</label>
+              <input type="number" id="newProjEarning" min="0" step="0.01" value="0">
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Add project</button>
+          <div class="form-msg" id="newProjMsg"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="tabpane" id="adminTab-portfolio">
+      <div class="modal-form" style="max-width:720px;">
+        <h3>Video editing showcase reels</h3>
+        <p class="sub-copy" style="margin-bottom:16px;">These cards appear in the public "Video Editing" section on the landing page.</p>
+        <form onsubmit="savePortfolio(event)">
+          <div id="portfolioEditorList"></div>
+          <button type="button" class="btn btn-sm" style="margin-top:10px;" onclick="addPortfolioRow()">+ Add reel</button>
+          <button type="submit" class="btn btn-primary" style="margin-top:18px;">Save portfolio</button>
+          <div class="form-msg" id="portfolioMsg"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="tabpane" id="adminTab-settings">
+      <div class="modal-form" style="max-width:720px;">
+        <h3>Site &amp; SEO settings</h3>
+        <form onsubmit="saveSettings(event)">
+          <div class="form-grid">
+            <div class="field">
+              <label>Site name (shown in the nav)</label>
+              <input type="text" id="setSiteName" placeholder="e.g. Splice/Stack">
+            </div>
+            <div class="field">
+              <label>Page title</label>
+              <input type="text" id="setTitle" placeholder="Shown in the browser tab and search results">
+            </div>
+          </div>
+          <div class="field">
+            <label>Meta description</label>
+            <textarea id="setDescription" placeholder="1–2 sentences summarizing the studio for search engines"></textarea>
+          </div>
+          <div class="field">
+            <label>Meta keywords (comma separated)</label>
+            <input type="text" id="setKeywords" placeholder="e.g. web development, video editing, agency">
+          </div>
+          <div class="form-grid">
+            <div class="field">
+              <label>Contact phone</label>
+              <input type="text" id="setPhone" placeholder="e.g. +1 555 123 4567">
+            </div>
+            <div class="field">
+              <label>Contact email</label>
+              <input type="email" id="setEmail" placeholder="e.g. hello@yourstudio.com">
+            </div>
+          </div>
+          <p class="auth-note">The phone number also sets where the floating WhatsApp button sends clients.</p>
+
+          <div class="field" style="margin-top:8px;">
+            <label>Service features &amp; add-ons</label>
+            <div id="featureEditorList"></div>
+            <button type="button" class="btn btn-sm" style="margin-top:10px;" onclick="addFeatureRow()">+ Add feature</button>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="margin-top:18px;">Save settings</button>
+          <div class="form-msg" id="settingsMsg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ FLOATING WHATSAPP BUTTON (always visible) ============ -->
+<a class="wa-float" id="waFloatBtn" href="https://wa.me/15551234567?text=Hi%20Splice%2FStack%2C%20I%27d%20like%20to%20talk%20about%20a%20project." target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
+  <span class="wa-ping" aria-hidden="true"></span>
+  <svg viewBox="0 0 32 32" fill="white" aria-hidden="true"><path d="M16.004 3C9.096 3 3.5 8.596 3.5 15.504c0 2.348.65 4.61 1.885 6.588L3 29l7.086-2.336a12.45 12.45 0 0 0 5.918 1.507h.005c6.907 0 12.503-5.596 12.503-12.504C28.512 8.759 22.912 3 16.004 3zm0 22.86h-.004a10.35 10.35 0 0 1-5.276-1.444l-.379-.225-4.206 1.387 1.408-4.1-.246-.42a10.33 10.33 0 0 1-1.586-5.554c0-5.72 4.657-10.377 10.393-10.377 2.776 0 5.383 1.082 7.345 3.046a10.31 10.31 0 0 1 3.043 7.343c0 5.72-4.658 10.344-10.492 10.344zm5.68-7.735c-.311-.156-1.842-.909-2.128-1.013-.286-.104-.494-.156-.702.156-.208.312-.806 1.013-.988 1.221-.182.208-.364.234-.675.078-.311-.156-1.313-.484-2.501-1.543-.925-.825-1.55-1.845-1.732-2.157-.182-.312-.02-.48.137-.636.14-.14.311-.364.467-.546.156-.182.208-.312.312-.52.104-.208.052-.39-.026-.546-.078-.156-.702-1.693-.962-2.319-.253-.608-.51-.526-.702-.536-.182-.008-.39-.01-.598-.01a1.15 1.15 0 0 0-.832.39c-.286.312-1.092 1.067-1.092 2.603 0 1.536 1.118 3.02 1.274 3.228.156.208 2.2 3.36 5.33 4.71.745.322 1.326.514 1.78.658.748.238 1.428.204 1.966.124.6-.09 1.842-.753 2.102-1.481.26-.728.26-1.352.182-1.481-.078-.13-.286-.208-.598-.364z"/></svg>
+</a>
+
+<!-- Video reel modal (YouTube / Google Drive embed) -->
+<div class="video-modal" id="videoModal" onclick="if(event.target===this) closeVideoModal()">
+  <div class="video-modal-inner">
+    <button type="button" class="video-modal-close" onclick="closeVideoModal()" aria-label="Close video">✕</button>
+    <div class="video-modal-frame-wrap" id="videoModalFrameWrap"></div>
+    <div class="video-modal-caption" id="videoModalCaption"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+
+  
+<script src="js/state.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/projects-store.js"></script>
+<script src="js/users-store.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/client.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/portfolio.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

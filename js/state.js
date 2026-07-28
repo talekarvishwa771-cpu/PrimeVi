@@ -16,7 +16,7 @@ const STORAGE_KEY = "spliceStack.data.v1";
 
 function persistState(){
   try{
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ siteSettings, videoShowcase }));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ siteSettings, videoShowcase, webShowcase }));
   } catch(e){
     console.warn("Could not save to localStorage", e);
   }
@@ -29,6 +29,7 @@ function loadState(){
     const data = JSON.parse(raw);
     if(data.siteSettings) siteSettings = data.siteSettings;
     if(Array.isArray(data.videoShowcase)) videoShowcase = data.videoShowcase;
+    if(Array.isArray(data.webShowcase)) webShowcase = data.webShowcase;
   } catch(e){
     console.warn("Could not load saved data, using seed data", e);
   }
@@ -52,6 +53,18 @@ let videoShowcase = [
   { title: "Ferrous — Explainer", tag: "2D ANIMATION", duration: "00:55", gradient: "grad-6", orientation: "9:16", videoUrl: "" }
 ];
 
+/* Web development showcase cards, shown on the public landing page
+   and editable from the admin Portfolio tab. Clicking a card (when a
+   link is set) opens that project's live site in a new tab. */
+let webShowcase = [
+  { title: "Fernweg Travel Co.", desc: "Headless booking flow with real-time availability, built to handle traffic spikes during flash sales.", tags: "Next.js, Tailwind, Stripe, Supabase", link: "" },
+  { title: "Northbound Analytics", desc: "A data dashboard rebuilt from a legacy jQuery app into a fast, componentized SPA with role-based access.", tags: "React, Node.js, PostgreSQL, D3.js", link: "" },
+  { title: "Kiln & Co. Ceramics", desc: "Storefront and inventory system for a small-batch pottery studio, with a custom order-tracking portal.", tags: "Shopify Hydrogen, GraphQL, Vite", link: "" },
+  { title: "Basecamp Climbing Gym", desc: "Membership and class-booking platform with waitlists, waivers, and instructor scheduling.", tags: "Vue 3, Express, MongoDB", link: "" },
+  { title: "Verdant Capital", desc: "Investor-facing portal with document rooms, e-signature workflow, and audit-logged access.", tags: "Next.js, Prisma, Auth0", link: "" },
+  { title: "Lumen Fitness App", desc: "Progressive web app for workout tracking with offline mode and wearable-device sync.", tags: "React Native, Firebase, Tailwind", link: "" }
+];
+
 /* Site-wide settings, editable from the admin Settings tab.
    Drives the page <title>, meta tags, nav brand, footer contact
    info, the WhatsApp button number, and the public "Services &
@@ -61,8 +74,8 @@ let siteSettings = {
   title: "Splice/Stack — Web Development & Video Editing Studio",
   description: "Splice/Stack is a web development and video editing studio. We build production-ready websites and cut brand films, social content, and documentaries.",
   keywords: "web development, video editing, web design, video production, brand films, agency",
-  phone: "+1 555 123 4567",
-  email: "hello@splicestack.studio",
+  phone: "+918767121059",
+  email: "hello@primevisuals.studio",
   features: [
     { name: "Rush Delivery", description: "48-hour turnaround available for urgent edits and quick-fix builds." },
     { name: "SEO Optimization", description: "On-page SEO structure baked into every web build, not bolted on after." },

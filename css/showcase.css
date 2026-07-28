@@ -33,14 +33,17 @@ section.section{padding:80px 0;border-bottom:1px solid var(--border);}
 .preview-link:hover{color:#6ef7d1;}
 
 /* ---------- Video showcase ---------- */
+.subsection-label{font-family:'JetBrains Mono', monospace;font-size:0.75rem;letter-spacing:0.05em;color:var(--text-faint);text-transform:uppercase;margin-bottom:14px;}
 .grid-video{display:grid;grid-template-columns:repeat(auto-fit, minmax(260px,1fr));gap:20px;}
+.grid-video-vertical{display:grid;grid-template-columns:repeat(auto-fit, minmax(170px,1fr));gap:20px;max-width:900px;}
 .vcard{border-radius:var(--radius);overflow:hidden;background:var(--panel);border:1px solid var(--border);transition:transform .15s ease, border-color .15s ease;}
 .vcard:hover{transform:translateY(-3px);border-color:rgba(0,230,168,0.35);}
 .vthumb{
-  position:relative;height:150px;
+  position:relative;aspect-ratio:16/9;height:auto;
   display:flex;align-items:center;justify-content:center;
   color:rgba(255,255,255,0.9);
 }
+.vthumb.vertical{aspect-ratio:9/16;}
 .vthumb::after{
   content:"";position:absolute;inset:0;
   background:linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.55) 100%);

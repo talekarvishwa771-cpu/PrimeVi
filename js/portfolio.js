@@ -11,6 +11,23 @@ const GRADIENT_OPTIONS = ["grad-1", "grad-2", "grad-3", "grad-4", "grad-5", "gra
    iframe URL. Returns the raw URL as a last-resort fallback if
    the link isn't recognized (some hosts embed fine directly,
    e.g. Vimeo, Loom). */
+/* Portfolio reels now live in Firestore (siteData/portfolio) so every
+   visitor sees the same content — not just the admin's own browser.
+   On boot we render the local seed/cache instantly, then swap in the
+   Firestore version once it arrives (avoids a blank flash). */
+async function loadPortfolioFromFirestore(){
+  try {
+    const doc = await db.collection("siteData").doc("portfolio").get();
+    if(doc.exists && Array.isArray(doc.data().reels)){
+      videoShowcase = doc.data().reels;
+      renderVideoShowcasePublic();
+      renderPortfolioEditor(); // no-op if admin tab isn't open yet, harmless
+    }
+  } catch(err) {
+    console.warn("Could not load portfolio from Firestore, using local data.", err);
+  }
+}
+
 function toEmbedUrl(rawUrl){
   if(!rawUrl) return null;
   const url = rawUrl.trim();
@@ -133,20 +150,35 @@ function removePortfolioRow(index){
   renderPortfolioEditor();
 }
 
-function savePortfolio(e){
+async function savePortfolio(e){
   e.preventDefault();
   syncPortfolioFromDOM();
   // drop fully-empty rows
   videoShowcase = videoShowcase.filter(v => v.title.trim() || v.tag.trim());
 
-  renderVideoShowcasePublic();
-  renderPortfolioEditor();
-  persistState();
-
   const msg = document.getElementById("portfolioMsg");
   if(msg){
-    msg.className = "form-msg show ok";
-    msg.textContent = "Portfolio updated.";
+    msg.className = "form-msg show";
+    msg.textContent = "Saving...";
   }
-  showToast("Portfolio saved");
+
+  try {
+    await db.collection("siteData").doc("portfolio").set({ reels: videoShowcase });
+
+    renderVideoShowcasePublic();
+    renderPortfolioEditor();
+
+    if(msg){
+      msg.className = "form-msg show ok";
+      msg.textContent = "Portfolio saved.";
+    }
+    showToast("Portfolio saved");
+  } catch(err) {
+    console.error("Firestore save failed", err);
+    if(msg){
+      msg.className = "form-msg show err";
+      msg.textContent = "Couldn't save — check your connection or Firestore permissions.";
+    }
+    showToast("Save failed");
+  }
 }

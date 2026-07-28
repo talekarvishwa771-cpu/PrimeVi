@@ -10,3 +10,8 @@ async function updateUserFields(uid, fields){
   if(u) Object.assign(u, fields);
   if(currentUser && currentUser.uid === uid) Object.assign(currentUser, fields);
 }
+
+async function deleteUser(uid){
+  await db.collection("users").doc(uid).delete();
+  allUsers = allUsers.filter(u => u.uid !== uid);
+}

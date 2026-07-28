@@ -24,7 +24,7 @@ function switchAdminTab(tab){
   if(tab === "manage") renderAdmin();
   if(tab === "clients") renderAdminClients();
   if(tab === "users") renderAdminUsers();
-  if(tab === "portfolio") renderPortfolioEditor();
+  if(tab === "portfolio"){ renderPortfolioEditor(); renderWebPortfolioEditor(); }
   if(tab === "settings") renderSettingsForm();
 }
 
@@ -334,6 +334,7 @@ const STAFF_ROLE_OPTIONS = ["client", "editor", "manager", "admin"];
 
 async function renderAdminUsers(search){
   if(typeof search === "string") userFilterText = search;
+  const admin = isFullAdmin();
   const wrap = document.getElementById("userTableBody");
   const head = document.getElementById("userTableHead");
   head.innerHTML = `<th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Projects</th><th>Actions</th>`;
@@ -373,9 +374,28 @@ async function renderAdminUsers(search){
         ${u.email ? `<a class="btn btn-sm" href="mailto:${escapeHtml(u.email)}">Email</a>` : ""}
         ${u.phone ? `<a class="btn btn-sm" href="tel:${escapeHtml(u.phone.replace(/[^\d+]/g, ""))}">Call</a>` : ""}
         <button class="btn btn-sm btn-ghost" onclick="filterAdminByClient('${(u.name || "").replace(/'/g, "\\'")}')">Projects</button>
+        ${admin ? `<button class="btn btn-sm btn-ghost" onclick="deleteUserRow('${u.uid}')" aria-label="Delete user" title="Delete user">✕</button>` : ""}
       </td>
     </tr>`;
   }).join("");
+}
+
+async function deleteUserRow(uid){
+  const u = allUsers.find(x => x.uid === uid);
+  if(!u) return;
+  if(currentUser && currentUser.uid === uid){
+    showToast("You can't delete your own account while signed in");
+    return;
+  }
+  if(!confirm(`Delete user "${u.name || u.email || "this user"}"? This can't be undone.`)) return;
+  try{
+    await deleteUser(uid);
+    renderAdminUsers(userFilterText);
+    showToast(`Deleted user: ${u.name || u.email || uid}`);
+  } catch(err){
+    console.error(err);
+    showToast("Delete failed — check your connection");
+  }
 }
 
 async function saveUserRow(uid){

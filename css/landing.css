@@ -1,15 +1,7 @@
 /* ==========================================================
    landing.css — timecode eyebrow motif, hero, timeline strip,
    generic section shells
-   ========================================================== */ 
-
-.btn[disabled]{opacity:0.7;cursor:not-allowed;pointer-events:none;transform:none;}
-.btn-spinner{
-  width:15px;height:15px;flex-shrink:0;border-radius:50%;
-  border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
-  animation:btn-spin 0.6s linear infinite;
-}
-@keyframes btn-spin{to{transform:rotate(360deg);}}
+   ========================================================== */
 
 /* ---------- Timecode eyebrow (signature motif) ---------- */
 .eyebrow{
@@ -64,6 +56,13 @@
 .btn-block{width:100%;justify-content:center;}
 .btn-sm{padding:8px 14px;font-size:0.8rem;}
 .btn-ghost{background:transparent;}
+.btn[disabled]{opacity:0.7;cursor:not-allowed;pointer-events:none;transform:none;}
+.btn-spinner{
+  width:15px;height:15px;flex-shrink:0;border-radius:50%;
+  border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;
+  animation:btn-spin 0.6s linear infinite;
+}
+@keyframes btn-spin{to{transform:rotate(360deg);}}
 
 /* the "timeline" strip under hero — signature element */
 .timeline-strip{

@@ -157,4 +157,86 @@ function toggleAuthMode() {
     signupForm.style.display = "none";
     loginForm.style.display = "";
     heading.textContent = "Sign in";
-    subCopy.textContent = "Enter your det
+    subCopy.textContent = "Enter your details to reach your project dashboard.";
+    demoNote.textContent = "Sign in with your client account, or create a new one below.";
+    toggleLink.innerHTML = "Don't have an account? <strong>Sign up</strong>";
+  } else {
+    loginForm.style.display = "none";
+    signupForm.style.display = "";
+    heading.textContent = "Create account";
+    subCopy.textContent = "Set up client access to submit briefs and track projects.";
+    demoNote.textContent = "Signup creates a client account. Agency staff accounts are set up separately.";
+    toggleLink.innerHTML = "Already have an account? <strong>Sign in</strong>";
+  }
+}
+
+function friendlyAuthError(code) {
+  switch (code) {
+    case "auth/user-not-found":
+    case "auth/wrong-password":
+    case "auth/invalid-credential":
+      return "Incorrect email or password.";
+    case "auth/too-many-requests":
+      return "Too many attempts. Try again later.";
+    case "auth/email-already-in-use":
+      return "An account with this email already exists. Try signing in instead.";
+    case "auth/weak-password":
+      return "Password must be at least 6 characters.";
+    case "auth/invalid-email":
+      return "Please enter a valid email address.";
+    default:
+      return "Login failed. Please try again.";
+  }
+}
+
+function revealStaffLogin() {
+  // Kept intentionally unused: /#hello never reveals the Client/Staff
+  // toggle — it logs in as staff/admin only, no way to switch to client
+  // from this route. See checkHiddenRoute() below.
+}
+
+auth.onAuthStateChanged(async function(user){
+  if(!user){
+    currentUser = null;
+    return;
+  }
+  if(authFlowInProgress) return;
+  if(currentUser) return;
+  try{
+    const doc = await db.collection("users").doc(user.uid).get();
+    if(!doc.exists) return;
+    const d = doc.data();
+    currentUser = { uid: user.uid, role: d.role, name: d.name, email: d.email || user.email, phone: d.phone || "", clientId: d.clientId || null };
+    sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
+    await loadProjects();
+    renderNav();
+    if(location.hash.toLowerCase() !== "#hello") goToDashboard();
+  } catch(e){
+    console.warn("Session restore failed", e);
+  }
+});
+
+function checkHiddenRoute() {
+  if (location.hash.toLowerCase() === "#hello") {
+    navigate("login");
+    setRole("staff");
+    document.getElementById("loginHeading").textContent = "Admin sign in";
+    document.getElementById("loginSubCopy").textContent = "Restricted access — agency staff only.";
+    history.replaceState(null, "", location.pathname + location.search);
+  }
+}
+
+function getCurrentUser() {
+  const raw = sessionStorage.getItem("currentUser");
+  return raw ? JSON.parse(raw) : null;
+}
+
+function logout() {
+  auth.signOut().then(() => {
+    sessionStorage.removeItem("currentUser");
+    currentUser = null;
+    projects = [];
+    allUsers = [];
+    navigate("landing");
+  });
+}

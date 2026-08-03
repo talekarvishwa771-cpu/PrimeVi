@@ -1,4 +1,3 @@
-
 let authFlowInProgress = false;
 
 function setRole(role) {
@@ -10,7 +9,6 @@ function setRole(role) {
 function presetRole(role) {
   setRole(role);
 }
-
 
 // Swaps a submit button between its normal label and a spinner + loading
 // label. Stores the original label on the element so it can be restored
@@ -37,7 +35,10 @@ async function handleLogin(event) {
   const email = document.getElementById("loginEmail").value.trim();
   const pass = document.getElementById("loginPass").value;
   const msgEl = document.getElementById("loginMsg");
-  msgEl.textContent = "Signing in...";
+  const btn = document.getElementById("loginSubmitBtn");
+
+  setFormMsg(msgEl, "Signing in…", "");
+  setBtnLoading(btn, true, "Signing in…");
   authFlowInProgress = true;
 
   try {
@@ -47,7 +48,7 @@ async function handleLogin(event) {
     // Look up role + profile info from Firestore
     const userDoc = await db.collection("users").doc(uid).get();
     if (!userDoc.exists) {
-      msgEl.textContent = "No profile found for this account.";
+      setFormMsg(msgEl, "No profile found for this account.", "err");
       await auth.signOut();
       return;
     }
@@ -56,12 +57,12 @@ async function handleLogin(event) {
 
     const isStaffAccount = userData.role !== "client";
     if (selectedRole === "client" && isStaffAccount) {
-      msgEl.textContent = "This account is a staff account. Use staff sign in instead.";
+      setFormMsg(msgEl, "This account is a staff account. Use staff sign in instead.", "err");
       await auth.signOut();
       return;
     }
     if (selectedRole === "staff" && !isStaffAccount) {
-      msgEl.textContent = "This account is a client account. Use client sign in instead.";
+      setFormMsg(msgEl, "This account is a client account. Use client sign in instead.", "err");
       await auth.signOut();
       return;
     }
@@ -78,7 +79,10 @@ async function handleLogin(event) {
 
     await loadProjects();
 
-    msgEl.textContent = "";
+    setFormMsg(msgEl, "Login successful! Redirecting…", "ok");
+    await new Promise(resolve => setTimeout(resolve, 700));
+
+    setFormMsg(msgEl, "", "");
     if (isStaffAccount) {
       navigate("admin");
       switchAdminTab(currentUser.role === "admin" ? "overview" : "manage");
@@ -87,9 +91,10 @@ async function handleLogin(event) {
       renderClient();
     }
   } catch (err) {
-    msgEl.textContent = friendlyAuthError(err.code);
+    setFormMsg(msgEl, friendlyAuthError(err.code), "err");
   } finally {
     authFlowInProgress = false;
+    setBtnLoading(btn, false);
   }
 }
 
@@ -100,7 +105,10 @@ async function handleSignup(event) {
   const phone = document.getElementById("signupPhone").value.trim();
   const pass = document.getElementById("signupPass").value;
   const msgEl = document.getElementById("signupMsg");
-  msgEl.textContent = "Creating account...";
+  const btn = document.getElementById("signupSubmitBtn");
+
+  setFormMsg(msgEl, "Creating account…", "");
+  setBtnLoading(btn, true, "Creating account…");
   authFlowInProgress = true;
 
   try {
@@ -121,13 +129,17 @@ async function handleSignup(event) {
     currentUser = { uid, role: "client", name, email, phone, clientId };
     sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
 
-    msgEl.textContent = "";
+    setFormMsg(msgEl, "Account created! Redirecting…", "ok");
+    await new Promise(resolve => setTimeout(resolve, 700));
+
+    setFormMsg(msgEl, "", "");
     navigate("client");
     renderClient();
   } catch (err) {
-    msgEl.textContent = friendlyAuthError(err.code);
+    setFormMsg(msgEl, friendlyAuthError(err.code), "err");
   } finally {
     authFlowInProgress = false;
+    setBtnLoading(btn, false);
   }
 }
 
@@ -142,102 +154,7 @@ function toggleAuthMode() {
   const showingSignup = signupForm.style.display !== "none";
 
   if (showingSignup) {
-    // Switch back to login
     signupForm.style.display = "none";
     loginForm.style.display = "";
     heading.textContent = "Sign in";
-    subCopy.textContent = "Enter your details to reach your project dashboard.";
-    demoNote.textContent = "Sign in with your client account, or create a new one below.";
-    toggleLink.innerHTML = "Don't have an account? <strong>Sign up</strong>";
-  } else {
-    // Switch to signup
-    loginForm.style.display = "none";
-    signupForm.style.display = "";
-    heading.textContent = "Create account";
-    subCopy.textContent = "Set up client access to submit briefs and track projects.";
-    demoNote.textContent = "Signup creates a client account. Agency staff accounts are set up separately.";
-    toggleLink.innerHTML = "Already have an account? <strong>Sign in</strong>";
-  }
-}
-
-function friendlyAuthError(code) {
-  switch (code) {
-    case "auth/user-not-found":
-    case "auth/wrong-password":
-    case "auth/invalid-credential":
-      return "Incorrect email or password.";
-    case "auth/too-many-requests":
-      return "Too many attempts. Try again later.";
-    case "auth/email-already-in-use":
-      return "An account with this email already exists. Try signing in instead.";
-    case "auth/weak-password":
-      return "Password must be at least 6 characters.";
-    case "auth/invalid-email":
-      return "Please enter a valid email address.";
-    default:
-      return "Login failed. Please try again.";
-  }
-}
-
-function revealStaffLogin() {
-  // Kept intentionally unused: /#hello never reveals the Client/Staff
-  // toggle — it logs in as staff/admin only, no way to switch to client
-  // from this route. See checkHiddenRoute() below.
-}
-
-auth.onAuthStateChanged(async function(user){
-  if(!user){
-    currentUser = null;
-    return;
-  }
-  if(authFlowInProgress) return; // handleLogin/handleSignup already own navigation for this attempt
-  if(currentUser) return;
-  try{
-    // Always re-fetch the role fresh from Firestore on session restore
-    // (page refresh, reopened tab) instead of trusting the cached copy
-    // in sessionStorage. A cached role can go stale — e.g. an account
-    // promoted to admin from the Users tab would otherwise keep showing
-    // the restricted "Manage Projects only" view until an explicit
-    // sign-out + sign-in, since the old cached role never got refreshed.
-    const doc = await db.collection("users").doc(user.uid).get();
-    if(!doc.exists) return;
-    const d = doc.data();
-    currentUser = { uid: user.uid, role: d.role, name: d.name, email: d.email || user.email, phone: d.phone || "", clientId: d.clientId || null };
-    sessionStorage.setItem("currentUser", JSON.stringify(currentUser));
-    await loadProjects();
-    renderNav();
-    if(location.hash.toLowerCase() !== "#hello") goToDashboard();
-  } catch(e){
-    console.warn("Session restore failed", e);
-  }
-});
-
-function checkHiddenRoute() {
-  if (location.hash.toLowerCase() === "#hello") {
-    navigate("login");
-    // /#hello is the admin-only back door — no Client/Staff toggle here,
-    // it always logs in as staff/admin. The regular "Client Login"
-    // buttons on the public site are the only way to reach a client
-    // sign-in, and they always preset the client role (see nav.js /
-    // index.html), so the two flows never cross.
-    setRole("staff");
-    document.getElementById("loginHeading").textContent = "Admin sign in";
-    document.getElementById("loginSubCopy").textContent = "Restricted access — agency staff only.";
-    history.replaceState(null, "", location.pathname + location.search);
-  }
-}
-
-function getCurrentUser() {
-  const raw = sessionStorage.getItem("currentUser");
-  return raw ? JSON.parse(raw) : null;
-}
-
-function logout() {
-  auth.signOut().then(() => {
-    sessionStorage.removeItem("currentUser");
-    currentUser = null;
-    projects = [];
-    allUsers = [];
-    navigate("landing");
-  });
-}
+    subCopy.textContent = "Enter your det

@@ -1,3 +1,4 @@
+
 let authFlowInProgress = false;
 
 function setRole(role) {
@@ -154,6 +155,7 @@ function toggleAuthMode() {
   const showingSignup = signupForm.style.display !== "none";
 
   if (showingSignup) {
+    // Switch back to login
     signupForm.style.display = "none";
     loginForm.style.display = "";
     heading.textContent = "Sign in";
@@ -161,6 +163,7 @@ function toggleAuthMode() {
     demoNote.textContent = "Sign in with your client account, or create a new one below.";
     toggleLink.innerHTML = "Don't have an account? <strong>Sign up</strong>";
   } else {
+    // Switch to signup
     loginForm.style.display = "none";
     signupForm.style.display = "";
     heading.textContent = "Create account";
@@ -200,9 +203,15 @@ auth.onAuthStateChanged(async function(user){
     currentUser = null;
     return;
   }
-  if(authFlowInProgress) return;
+  if(authFlowInProgress) return; // handleLogin/handleSignup already own navigation for this attempt
   if(currentUser) return;
   try{
+    // Always re-fetch the role fresh from Firestore on session restore
+    // (page refresh, reopened tab) instead of trusting the cached copy
+    // in sessionStorage. A cached role can go stale — e.g. an account
+    // promoted to admin from the Users tab would otherwise keep showing
+    // the restricted "Manage Projects only" view until an explicit
+    // sign-out + sign-in, since the old cached role never got refreshed.
     const doc = await db.collection("users").doc(user.uid).get();
     if(!doc.exists) return;
     const d = doc.data();
@@ -219,6 +228,11 @@ auth.onAuthStateChanged(async function(user){
 function checkHiddenRoute() {
   if (location.hash.toLowerCase() === "#hello") {
     navigate("login");
+    // /#hello is the admin-only back door — no Client/Staff toggle here,
+    // it always logs in as staff/admin. The regular "Client Login"
+    // buttons on the public site are the only way to reach a client
+    // sign-in, and they always preset the client role (see nav.js /
+    // index.html), so the two flows never cross.
     setRole("staff");
     document.getElementById("loginHeading").textContent = "Admin sign in";
     document.getElementById("loginSubCopy").textContent = "Restricted access — agency staff only.";
@@ -237,6 +251,8 @@ function logout() {
     currentUser = null;
     projects = [];
     allUsers = [];
+    clearDashboardDom();
     navigate("landing");
+    showToast("Signed out");
   });
 }

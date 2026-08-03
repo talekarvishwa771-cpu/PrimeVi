@@ -1,17 +1,4 @@
-// 
-// Replaces the demo "any email/password works" login with real Firebase Auth.
-// Client and Admin both log in with Firebase email/password.
-// Role (client vs admin) is read from a "users" collection in Firestore.
 
-// selectedRole is already declared as a global in state.js — reuse it here
-
-// True while handleLogin/handleSignup are actively running. Signing in
-// with Firebase Auth fires onAuthStateChanged almost immediately — often
-// before this file's own role-check has finished — which was causing the
-// session-restore listener below to navigate on its own (ignoring which
-// role tab the user picked) before handleLogin got a chance to run its
-// client-vs-staff check. This flag makes handleLogin/handleSignup the only
-// place that decides where to navigate during an explicit login attempt.
 let authFlowInProgress = false;
 
 function setRole(role) {

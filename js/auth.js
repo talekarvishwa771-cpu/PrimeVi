@@ -11,6 +11,27 @@ function presetRole(role) {
   setRole(role);
 }
 
+
+// Swaps a submit button between its normal label and a spinner + loading
+// label. Stores the original label on the element so it can be restored
+// exactly, regardless of what text was there to start with.
+function setBtnLoading(btn, loading, loadingText) {
+  if (loading) {
+    btn.dataset.originalLabel = btn.dataset.originalLabel || btn.textContent;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="btn-spinner"></span> ${loadingText}`;
+  } else {
+    btn.disabled = false;
+    btn.textContent = btn.dataset.originalLabel || btn.textContent;
+  }
+}
+
+function setFormMsg(msgEl, text, kind) {
+  // kind: "ok", "err", or "" (plain/neutral, e.g. "Signing in...")
+  msgEl.textContent = text;
+  msgEl.className = text ? `form-msg show ${kind || ""}`.trim() : "form-msg";
+}
+
 async function handleLogin(event) {
   event.preventDefault();
   const email = document.getElementById("loginEmail").value.trim();

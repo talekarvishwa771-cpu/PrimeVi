@@ -305,7 +305,7 @@ function renderAdminClients(){
           </div>
           <div class="client-card-actions">
             <button class="btn btn-sm" onclick="filterAdminByClient('${safeName}')">View projects</button>
-            ${admin ? `<button class="btn btn-sm btn-ghost" onclick="deleteClient('${safeName}')" aria-label="Delete all projects for this client" title="Delete all projects for this client">✕</button>` : ""}
+            ${admin ? `<button class="btn btn-sm btn-ghost btn-icon" onclick="deleteClient('${safeName}')" aria-label="Delete all projects for this client" title="Delete all projects for this client">✕</button>` : ""}
           </div>
         </div>
         <div class="client-card-tags">

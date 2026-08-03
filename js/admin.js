@@ -179,7 +179,7 @@ function renderAdmin(){
       ${admin ? `<td><input type="number" class="row-text" style="width:90px;" min="0" step="0.01" value="${Number(p.earning) || 0}" id="earning-${p.id}"></td>` : ""}
       <td class="row-actions">
         <button class="btn btn-sm btn-mint" onclick="saveProject('${p.id}')">Save</button>
-        ${admin ? `<button class="btn btn-sm btn-ghost" onclick="deleteProject('${p.id}')" aria-label="Delete project" title="Delete project">✕</button>` : ""}
+        ${admin ? `<button class="btn btn-sm btn-ghost btn-icon" onclick="deleteProject('${p.id}')" aria-label="Delete project" title="Delete project">✕</button>` : ""}
       </td>
     </tr>
   `).join("");

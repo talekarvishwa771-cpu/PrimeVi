@@ -374,7 +374,7 @@ async function renderAdminUsers(search){
         ${u.email ? `<a class="btn btn-sm" href="mailto:${escapeHtml(u.email)}">Email</a>` : ""}
         ${u.phone ? `<a class="btn btn-sm" href="tel:${escapeHtml(u.phone.replace(/[^\d+]/g, ""))}">Call</a>` : ""}
         <button class="btn btn-sm btn-ghost" onclick="filterAdminByClient('${(u.name || "").replace(/'/g, "\\'")}')">Projects</button>
-        ${admin ? `<button class="btn btn-sm btn-ghost" onclick="deleteUserRow('${u.uid}')" aria-label="Delete user" title="Delete user">✕</button>` : ""}
+        ${admin ? `<button class="btn btn-sm btn-ghost btn-icon" onclick="deleteUserRow('${u.uid}')" aria-label="Delete user" title="Delete user">✕</button>` : ""}
       </td>
     </tr>`;
   }).join("");

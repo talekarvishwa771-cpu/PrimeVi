@@ -128,28 +128,6 @@ tbody tr:hover{background:rgba(255,255,255,0.02);}
   .feature-row-fields{grid-template-columns:1fr;}
 }
 
-/* labeled rows used by the Portfolio tab (video reels + web projects) */
-.reel-row{align-items:flex-start;}
-.reel-row-fields{
-  flex:1;display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1fr;gap:10px;
-}
-.field-mini{display:flex;flex-direction:column;gap:4px;min-width:0;}
-.field-mini label{
-  font-size:0.68rem;letter-spacing:0.03em;text-transform:uppercase;
-  color:var(--text-faint);font-family:'JetBrains Mono', monospace;
-}
-.field-mini input, .field-mini select{width:100%;}
-.field-mini-narrow{grid-column:span 1;}
-.field-mini-full{grid-column:1 / -1;}
-@media (max-width:720px){
-  .reel-row-fields{grid-template-columns:1fr 1fr;}
-  .field-mini-full{grid-column:1 / -1;}
-}
-@media (max-width:420px){
-  .reel-row-fields{grid-template-columns:1fr;}
-  .field-mini-full{grid-column:1;}
-}
-
 /* ---------- Overview tab ---------- */
 .stat-grid{
   display:grid;grid-template-columns:repeat(auto-fit, minmax(140px,1fr));gap:14px;margin-bottom:24px;
@@ -178,11 +156,11 @@ tbody tr:hover{background:rgba(255,255,255,0.02);}
 /* ---------- Manage Projects filter bar ---------- */
 .filter-bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;}
 .row-actions{display:flex;gap:6px;align-items:center;}
-.row-actions .btn-ghost{
+.row-actions .btn-icon{
   color:var(--text-faint);border:1px solid var(--border);width:30px;height:30px;padding:0;
   display:flex;align-items:center;justify-content:center;border-radius:6px;
 }
-.row-actions .btn-ghost:hover{color:var(--red);border-color:var(--red);}
+.row-actions .btn-icon:hover{color:var(--red);border-color:var(--red);}
 
 /* ---------- Clients tab ---------- */
 .client-card{

@@ -251,7 +251,6 @@ function logout() {
     currentUser = null;
     projects = [];
     allUsers = [];
-    clearDashboardDom();
     navigate("landing");
     showToast("Signed out");
   });

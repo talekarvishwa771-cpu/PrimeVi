@@ -229,18 +229,29 @@ function renderWebShowcasePublic(){
 }
 
 /* ---------- Admin: Web Portfolio editor ---------- */
-
 function renderWebPortfolioEditor(){
   const wrap = document.getElementById("webPortfolioEditorList");
   if(!wrap) return;
   wrap.innerHTML = webShowcase.map((w, i) => `
-    <div class="feature-row" style="flex-wrap:wrap;">
-      <div class="feature-row-fields">
-        <input type="text" class="row-text" data-web-title="${i}" value="${escapeHtml(w.title)}" placeholder="Project title">
-        <input type="text" class="row-text" data-web-desc="${i}" value="${escapeHtml(w.desc || "")}" placeholder="Short description">
+    <div class="feature-row reel-row">
+      <div class="reel-row-fields">
+        <div class="field-mini">
+          <label>Project title</label>
+          <input type="text" class="row-text" data-web-title="${i}" value="${escapeHtml(w.title)}" placeholder="e.g. Fernweg Travel Co.">
+        </div>
+        <div class="field-mini">
+          <label>Short description</label>
+          <input type="text" class="row-text" data-web-desc="${i}" value="${escapeHtml(w.desc || "")}" placeholder="One line about the project">
+        </div>
+        <div class="field-mini field-mini-full">
+          <label>Tech tags (comma separated)</label>
+          <input type="text" class="row-text" data-web-tags="${i}" value="${escapeHtml(w.tags || "")}" placeholder="e.g. Next.js, Tailwind, Stripe">
+        </div>
+        <div class="field-mini field-mini-full">
+          <label>Live site URL</label>
+          <input type="text" class="row-text" data-web-link="${i}" value="${escapeHtml(w.link || "")}" placeholder="Opens when the card is clicked">
+        </div>
       </div>
-      <input type="text" class="row-text" data-web-tags="${i}" value="${escapeHtml(w.tags || "")}" placeholder="Tech tags, comma separated (e.g. Next.js, Tailwind)" style="width:100%;margin-top:8px;">
-      <input type="text" class="row-text" data-web-link="${i}" value="${escapeHtml(w.link || "")}" placeholder="Live site URL (opens when the card is clicked)" style="width:100%;margin-top:8px;">
       <button type="button" class="btn btn-sm btn-ghost" onclick="removeWebPortfolioRow(${i})" aria-label="Remove project">✕</button>
     </div>
   `).join("");

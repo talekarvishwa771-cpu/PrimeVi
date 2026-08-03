@@ -38,8 +38,34 @@ function goToDashboard(){
   }
 }
 
-function logout(){
-  currentUser = null;
-  navigate("landing");
-  showToast("Signed out");
+// Wipes previously rendered client/admin dashboard content out of the DOM.
+// Pages are toggled with CSS (display:none) rather than removed, so
+// without this, a signed-out session leaves the last-rendered numbers,
+// tables, and names sitting in the hidden markup — visible to anyone who
+// views page source, opens dev tools, or uses the browser's reading /
+// accessibility mode on that tab afterward.
+function clearDashboardDom(){
+  const emptyIds = [
+    "ovStatusBars", "ovRecent", "adminTableBody", "adminTableHead",
+    "userTableBody", "userTableHead", "adminClientsList", "clientProjectsList"
+  ];
+  emptyIds.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.innerHTML = "";
+  });
+
+  const zeroed = {
+    ovStatTotal: "0", ovStatClients: "0", ovStatProgress: "0%",
+    ovStatWeb: "0", ovStatVideo: "0", ovStatEarnings: "$0"
+  };
+  Object.keys(zeroed).forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.textContent = zeroed[id];
+  });
+
+  const earningsCard = document.getElementById("ovStatEarningsCard");
+  if(earningsCard) earningsCard.style.display = "none";
+
+  const greetName = document.getElementById("clientGreetName");
+  if(greetName) greetName.textContent = "Welcome back";
 }

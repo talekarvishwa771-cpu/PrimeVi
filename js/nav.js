@@ -7,6 +7,12 @@ function navigate(view){
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById("page-" + view).classList.add("active");
   window.scrollTo({top:0, behavior:"instant" in window ? "instant" : "auto"});
+  // Wipe stale dashboard content whenever we land back on login/landing —
+  // covers explicit logout AND cases like the #hello route showing the
+  // login screen again while a Firebase session is still technically
+  // active (no logout() call happens on that path, so this can't live
+  // only inside logout()).
+  if(view === "login" || view === "landing") clearDashboardDom();
   renderNav();
 }
 
